@@ -20,7 +20,7 @@
 # DEALINGS IN THE SOFTWARE.
 ################################################################################
 
-APP:= lpr-test-app
+APP:= deepstream-lpr-app
 
 CXX=g++
 
@@ -41,7 +41,7 @@ INCS:= $(wildcard *.h)
 PKGS:= gstreamer-1.0
 
 ##OBJS:= $(SRCS:.c=.o)
-OBJS:= lpr_test_app.o deepstream_nvdsanalytics_meta.o
+OBJS:= deepstream_lpr_app.o deepstream_nvdsanalytics_meta.o
 
 CFLAGS+= -I/opt/nvidia/deepstream/deepstream-$(NVDS_VERSION)/sources/includes
 
@@ -59,7 +59,7 @@ all: $(APP)
 %.o: %.c $(INCS) Makefile
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-lpr_test_app.o: lpr_test_app.c $(INCS) Makefile
+deepstream_lpr_app.o: deepstream_lpr_app.c $(INCS) Makefile
 	$(CXX) -c -o $@ -fpermissive -Wall -Werror $(CFLAGS) $<
 
 deepstream_nvdsanalytics_meta.o: deepstream_nvdsanalytics_meta.cpp $(INCS) Makefile

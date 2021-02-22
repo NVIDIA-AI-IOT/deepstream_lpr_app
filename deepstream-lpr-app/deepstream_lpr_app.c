@@ -640,8 +640,7 @@ main (int argc, char *argv[])
 
   if (atoi(argv[1]) == 1) {
     g_object_set (G_OBJECT (primary_detector), "config-file-path",
-        "/opt/nvidia/deepstream/deepstream-5.0/samples/configs/"
-        "tlt_pretrained_models/config_infer_primary_trafficcamnet.txt",
+        "trafficamnet_config.txt",
 	    "unique-id", PRIMARY_DETECTOR_UID, NULL);
 
     g_object_set (G_OBJECT (secondary_classifier), "config-file-path",

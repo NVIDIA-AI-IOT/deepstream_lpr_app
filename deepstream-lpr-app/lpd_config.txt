@@ -48,25 +48,42 @@
 
 [property]
 gpu-id=0
-onnx-file=us_lprnet_v1.onnx
-model-engine-file=us_lprnet_v1.onnx_b24_gpu0_fp32.engine
-labelfile-path=labels.txt
-batch-size=1
+net-scale-factor=0.0039215697906911373
+model-color-format=1
+labelfile-path=../models/LP/LPD/usa_lpd_label.txt
+tlt-encoded-model=../models/LP/LPD/usa_pruned.etlt
+tlt-model-key=nvidia_tlt
+#model-engine-file=../models/LP/LPD/usa_pruned.etlt_b16_gpu0_int8.engine
+int8-calib-file=../models/LP/LPD/usa_lpd_cal.bin
+uff-input-dims=3;480;640;0
+uff-input-blob-name=input_1
+batch-size=16
 ## 0=FP32, 1=INT8, 2=FP16 mode
-network-mode=0
-num-detected-classes=45
-gie-unique-id=1
-output-blob-names=output_bbox/BiasAdd;output_cov/Sigmoid
-#0=Detection 1=Classifier 2=Segmentation
-network-type=1
-parse-classifier-func-name=NvDsInferParseCustomNVPlate
-custom-lib-path=/opt/nvidia/deepstream/deepstream-5.0/lib/libnvdsinfer_custom_impl_lpr.so
-##1=Primary 2=Secondary
-process-mode=1
-net-scale-factor=0.00392156862745098
-#net-scale-factor=1.0
-#0=RGB 1=BGR 2=GRAY
-model-color-format=0
+network-mode=1
+num-detected-classes=1
+##1 Primary 2 Secondary
+process-mode=2
+interval=0
+gie-unique-id=2
+#0 detector 1 classifier 2 segmentatio 3 instance segmentation
+network-type=0
+operate-on-gie-id=1
+operate-on-class-ids=0
+#no cluster
+cluster-mode=3
+output-blob-names=output_cov/Sigmoid;output_bbox/BiasAdd
+input-object-min-height=30
+input-object-min-width=40
+#GPU: 1 VIC:2(Jetson only)
+#scaling-compute-hw=2
+#enable-dla=1
 
 [class-attrs-all]
-threshold=0.5
+pre-cluster-threshold=0.3
+roi-top-offset=0
+roi-bottom-offset=0
+detected-min-w=0
+detected-min-h=0
+detected-max-w=0
+detected-max-h=0
+

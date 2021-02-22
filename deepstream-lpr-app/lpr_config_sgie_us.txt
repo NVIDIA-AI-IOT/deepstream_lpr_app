@@ -48,8 +48,8 @@
 
 [property]
 gpu-id=0
-model-engine-file=/opt/nvidia/deepstream/deepstream-5.0/samples/models/LP/LPR/lpr_us_onnx_b16.engine
-labelfile-path=/opt/nvidia/deepstream/deepstream-5.0/samples/models/LP/LPR/labels_us.txt
+model-engine-file=../models/LP/LPR/lpr_us_onnx_b16.engine
+labelfile-path=../models/LP/LPR/labels_us.txt
 batch-size=16
 ## 0=FP32, 1=INT8, 2=FP16 mode
 network-mode=2
@@ -59,7 +59,7 @@ output-blob-names=output_bbox/BiasAdd;output_cov/Sigmoid
 #0=Detection 1=Classifier 2=Segmentation
 network-type=1
 parse-classifier-func-name=NvDsInferParseCustomNVPlate
-custom-lib-path=/opt/nvidia/deepstream/deepstream-5.0/lib/libnvdsinfer_custom_impl_lpr.so
+custom-lib-path=../nvinfer_custom_lpr_parser/libnvdsinfer_custom_impl_lpr.so
 process_mode=2
 operate-on-gie-id=2
 net-scale-factor=0.00392156862745098
