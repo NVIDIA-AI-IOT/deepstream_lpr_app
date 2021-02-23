@@ -634,22 +634,21 @@ main (int argc, char *argv[])
    * detects the cars. The first SGIE detects car plates from the cars and the
    * second SGIE classifies the caracters in the car plate to identify the car
    * plate string. */
-  g_object_set (G_OBJECT (secondary_detector), "config-file-path",
-      "lpd_config.txt", "unique-id",
-      SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
+  g_object_set (G_OBJECT (primary_detector), "config-file-path",
+      "trafficamnet_config.txt",
+      "unique-id", PRIMARY_DETECTOR_UID, NULL);
 
   if (atoi(argv[1]) == 1) {
-    g_object_set (G_OBJECT (primary_detector), "config-file-path",
-        "trafficamnet_config.txt",
-	    "unique-id", PRIMARY_DETECTOR_UID, NULL);
-
+    g_object_set (G_OBJECT (secondary_detector), "config-file-path",
+        "lpd_us_config.txt", "unique-id",
+        SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
     g_object_set (G_OBJECT (secondary_classifier), "config-file-path",
         "lpr_config_sgie_us.txt", "unique-id", SECONDARY_CLASSIFIER_UID,
         "process-mode", 2, NULL);
   } else if (atoi(argv[1]) == 2) {
-    g_object_set (G_OBJECT (primary_detector), "config-file-path",
-        "car_config.txt", "unique-id", PRIMARY_DETECTOR_UID, NULL);
-
+    g_object_set (G_OBJECT (secondary_detector), "config-file-path",
+        "lpd_ccpd_config.txt", "unique-id",
+        SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
     g_object_set (G_OBJECT (secondary_classifier), "config-file-path",
         "lpr_config_sgie_ch.txt", "unique-id", SECONDARY_CLASSIFIER_UID,
         "process-mode", 2, NULL);

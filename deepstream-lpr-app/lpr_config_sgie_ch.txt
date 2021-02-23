@@ -48,12 +48,12 @@
 
 [property]
 gpu-id=0
-onnx-file=../models/LP/LPR/lprnet_ep130_32x96.onnx
+model-engine-file=../models/LP/LPR/lpr_ch_onnx_b16.engine
 labelfile-path=../models/LP/LPR/labels_ch.txt
 batch-size=16
 ## 0=FP32, 1=INT8, 2=FP16 mode
 network-mode=2
-num-detected-classes=45
+num-detected-classes=3
 gie-unique-id=3
 output-blob-names=output_bbox/BiasAdd;output_cov/Sigmoid
 #0=Detection 1=Classifier 2=Segmentation

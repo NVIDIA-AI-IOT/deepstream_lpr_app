@@ -74,7 +74,7 @@ cluster-mode=3
 output-blob-names=output_cov/Sigmoid;output_bbox/BiasAdd
 input-object-min-height=30
 input-object-min-width=40
-#GPU: 1 VIC:2(Jetson only)
+#GPU:1  VIC:2(Jetson only)
 #scaling-compute-hw=2
 #enable-dla=1
 

@@ -4,6 +4,7 @@
  - [Prerequisition](#prerequisition)
  - [Download](#download)
  - [Build and Run](#build-and-run)
+ - [Notice](#notice)
 
 ---
 
@@ -64,22 +65,49 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 
 ```
     cd deepstream_lpr_app/
-    ./download.sh
+```
+For US car plate recognition
+```
+    ./download_us.sh
     // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tlt-converter
     ./tlt-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
-           ../models/LP/LPR/us_lprnet_baseline18_deployable.etlt -t fp16 -e ../models/LP/LPR/lpr_us_onnx_b16.engine
-    cd -
+           models/LP/LPR/us_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/lpr_us_onnx_b16.engine
+```
+For Chinese car plate recognition
+```
+    ./download_ch.sh
+    // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tlt-converter
+    ./tlt-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
+           models/LP/LPR/ch_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/lpr_ch_onnx_b16.engine
 ```
 
 ## Build and Run
 ```
     make
     cd deepstream-lpr-app
+```
+For US car plate recognition
+```
     cp dict_us.txt dict.txt
+```
+For Chinese car plate recognition
+```
+    cp dict_ch.txt dict.txt
+```
+Start to run the application
+```
     ./deepstream-lpr-app <1:US car plate model|2: Chinese car plate model> \
          <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|1:ROI enable> \
          <input mp4 file name> ... <input mp4 file name> <output file name>
 ```
-A sample of the command line:
+A sample of US car plate recognition:
 
 `./deepstream-lpr-app 1 2 0 us_car_test2.mp4 us_car_test2.mp4 output.264`
+
+A sample of Chinese car plate recognition:
+
+`./deepstream-lpr-app 2 2 0 ch_car_test.mp4 ch_car_test.mp4 output.264`
+
+## Notice
+1. This sample application only support mp4 files which contain H264 videos as input files.
+2. For Chinese plate recognition, please make sure the OS supports Chinese language.
