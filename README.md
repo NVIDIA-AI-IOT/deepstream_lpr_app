@@ -40,7 +40,7 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
   
 * [tlt-converter](https://developer.nvidia.com/tlt-getting-started)
 
-  Download x86 or Jetson tlt-converter from the following links which is compatible to your platform.
+  Download x86 or Jetson tlt-converter which is compatible to your platform from the following links.
 
 | Platform   |  Compute                       |        Link                                              |
 |------------|--------------------------------|----------------------------------------------------------|
