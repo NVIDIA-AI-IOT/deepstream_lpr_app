@@ -77,8 +77,8 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
     cd deepstream-lpr-app
     cp dict_us.txt dict.txt
     ./deepstream-lpr-app <1:US car plate model|2: Chinese car plate model> \
-         <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|0:ROI enable> <input mp4 file name> \
-         <input mp4 file name> ... <output file name>
+         <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|1:ROI enable> \
+         <input mp4 file name> ... <input mp4 file name> <output file name>
 ```
 A sample of the command line:
 

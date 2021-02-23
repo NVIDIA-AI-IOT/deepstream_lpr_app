@@ -12,7 +12,7 @@ This sample only support MP4 files with h264 video.
 
 The command line is:
 
-./deepstream-lpr-app <1:US car plate model|2: Chinese car plate model> <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|0:ROI enable> <input mp4 file name> <input mp4 file name> ... <output file name>
+./deepstream-lpr-app <1:US car plate model|2: Chinese car plate model> <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|1:ROI enable> <input mp4 file name> ... <input mp4 file name> <output file name>
 
 For example:
 Current default sample of U.S.A plate recognition, e.g. the command line for 16 streams recognition is:
