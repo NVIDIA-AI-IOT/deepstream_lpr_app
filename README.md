@@ -20,7 +20,7 @@ This pipeline is based on three TLT models below
 * LPD (car license plate detection) model https://ngc.nvidia.com/catalog/models/nvidia:tlt_lpdnet
 * LPR (car license plate recognization/text extraction) model https://ngc.nvidia.com/catalog/models/nvidia:tlt_lprnet
 
-More details for TLT3.0 LPD and LPR models and TLT training, please refer to [APLR blog](https://docs.google.com/document/d/1tMH0ku284AqqcVdioS1XazyT0-uGNNpg4-r64JaIBZA/edit#).
+More details for TLT3.0 LPD and LPR models and TLT training, please refer to [TLT document](https://docs.nvidia.com/metropolis/TLT/tlt-getting-started-guide/).
 
 ## Performance
 Below table shows the end-to-end performance of processing 1080p videos with this sample application.
@@ -40,7 +40,17 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
   
 * [tlt-converter](https://developer.nvidia.com/tlt-getting-started)
 
-  Download x86 or Jetson tlt-converter from https://developer.nvidia.com/tlt-getting-started
+  Download x86 or Jetson tlt-converter from the following links which is compatible to your platform.
+
+| Platform   |  Compute                       |        Link                                              |
+|------------|--------------------------------|----------------------------------------------------------|
+|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda102-cudnn80-trt71)|
+|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda102-cudnn80-trt72)|
+|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda110-cudnn80-trt71)|
+|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda110-cudnn80-trt72)|
+|Jetson      |JetPack 4.4                     |[link](https://developer.nvidia.com/cuda102-trt71-jp44)   |
+|Jetson      |JetPack 4.5                     |[link](https://developer.nvidia.com/cuda102-trt71-jp45)   |
+
 ## Download
 
 1. Download Project with SSH or HTTPS
@@ -72,4 +82,4 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 ```
 A sample of the command line:
 
-`./deepstream-lpr-app  1 2 0 us_car_test2.mp4 us_car_test2.mp4 output.264`
+`./deepstream-lpr-app 1 2 0 us_car_test2.mp4 us_car_test2.mp4 output.264`
