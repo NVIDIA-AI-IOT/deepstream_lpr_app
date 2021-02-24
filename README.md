@@ -111,3 +111,5 @@ A sample of Chinese car plate recognition:
 ## Notice
 1. This sample application only support mp4 files which contain H264 videos as input files.
 2. For Chinese plate recognition, please make sure the OS supports Chinese language.
+3. The second argument of deepstream-lpr-app should be 2(fakesink) for performance test.
+4. The trafficcamnet and LPD models are all INT8 models, the LPR model is FP16 model.
