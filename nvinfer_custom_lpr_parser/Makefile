@@ -21,11 +21,9 @@
 ################################################################################
 CC:= g++
 
-NVDS_VERSION:=5.0
-
 CFLAGS:= -Wall -Werror -std=c++11 -shared -fPIC -Wno-error=deprecated-declarations
 
-CFLAGS+= -I/opt/nvidia/deepstream/deepstream-$(NVDS_VERSION)/sources/includes
+CFLAGS+= -I/opt/nvidia/deepstream/deepstream/sources/includes
 
 LIBS:= -lnvinfer -lnvparsers
 LFLAGS:= -Wl,--start-group $(LIBS) -Wl,--end-group

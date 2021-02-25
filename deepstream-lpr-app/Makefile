@@ -26,9 +26,7 @@ CXX=g++
 
 TARGET_DEVICE = $(shell gcc -dumpmachine | cut -f1 -d -)
 
-NVDS_VERSION:=5.0
-
-LIB_INSTALL_DIR?=/opt/nvidia/deepstream/deepstream-$(NVDS_VERSION)/lib/
+LIB_INSTALL_DIR?=/opt/nvidia/deepstream/deepstream/lib/
 
 ifeq ($(TARGET_DEVICE),aarch64)
   CFLAGS:= -DPLATFORM_TEGRA
@@ -43,7 +41,7 @@ PKGS:= gstreamer-1.0
 ##OBJS:= $(SRCS:.c=.o)
 OBJS:= deepstream_lpr_app.o deepstream_nvdsanalytics_meta.o
 
-CFLAGS+= -I/opt/nvidia/deepstream/deepstream-$(NVDS_VERSION)/sources/includes
+CFLAGS+= -I/opt/nvidia/deepstream/deepstream/sources/includes
 
 CFLAGS+= `pkg-config --cflags $(PKGS)`
 
