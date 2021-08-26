@@ -39,7 +39,7 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 
   Make sure deepstream-test1 sample can run successful to verify your DeepStream installation
   
-* [tao-converter](https://developer.nvidia.com/tao-getting-started)
+* [tao-converter](https://developer.nvidia.com/tao-toolkit-get-started)
 
   Download x86 or Jetson tao-converter which is compatible to your platform from the following links.
 
