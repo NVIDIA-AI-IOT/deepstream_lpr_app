@@ -21,7 +21,7 @@ This pipeline is based on three TAO models below
 * LPD (car license plate detection) model https://ngc.nvidia.com/catalog/models/nvidia:tao:lpdnet
 * LPR (car license plate recognization/text extraction) model https://ngc.nvidia.com/catalog/models/nvidia:tao:lprnet
 
-More details for TAO3.0 LPD and LPR models and TAO training, please refer to [TAO document](https://docs.nvidia.com/metropolis/TAO/tao-getting-started-guide/).
+More details for TAO3.0 LPD and LPR models and TAO training, please refer to [TAO document](https://docs.nvidia.com/tao/tao-toolkit/text/overview.html).
 
 ## Performance
 Below table shows the end-to-end performance of processing 1080p videos with this sample application.
