@@ -9,19 +9,19 @@
 ---
 
 ## Description
-This sample is to show how to use graded models for detection and classification with DeepStream SDK version not less than 5.0.1. The models in this sample are all TLT3.0 models.
+This sample is to show how to use graded models for detection and classification with DeepStream SDK version not less than 5.0.1. The models in this sample are all TAO3.0 models.
 
 `PGIE(car detection) -> SGIE(car license plate detection) -> SGIE(car license plate recognization)`
 
 ![LPR/LPD application](lpr.png)
 
-This pipeline is based on three TLT models below
+This pipeline is based on three TAO models below
 
-* Car detection model https://ngc.nvidia.com/catalog/models/nvidia:tlt_trafficcamnet
-* LPD (car license plate detection) model https://ngc.nvidia.com/catalog/models/nvidia:tlt_lpdnet
-* LPR (car license plate recognization/text extraction) model https://ngc.nvidia.com/catalog/models/nvidia:tlt_lprnet
+* Car detection model https://ngc.nvidia.com/catalog/models/nvidia:tao:trafficcamnet
+* LPD (car license plate detection) model https://ngc.nvidia.com/catalog/models/nvidia:tao:lpdnet
+* LPR (car license plate recognization/text extraction) model https://ngc.nvidia.com/catalog/models/nvidia:tao:lprnet
 
-More details for TLT3.0 LPD and LPR models and TLT training, please refer to [TLT document](https://docs.nvidia.com/metropolis/TLT/tlt-getting-started-guide/).
+More details for TAO3.0 LPD and LPR models and TAO training, please refer to [TAO document](https://docs.nvidia.com/metropolis/TAO/tao-getting-started-guide/).
 
 ## Performance
 Below table shows the end-to-end performance of processing 1080p videos with this sample application.
@@ -39,18 +39,22 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 
   Make sure deepstream-test1 sample can run successful to verify your DeepStream installation
   
-* [tlt-converter](https://developer.nvidia.com/tlt-getting-started)
+* [tao-converter](https://developer.nvidia.com/tao-getting-started)
 
-  Download x86 or Jetson tlt-converter which is compatible to your platform from the following links.
+  Download x86 or Jetson tao-converter which is compatible to your platform from the following links.
 
 | Platform   |  Compute                       |        Link                                              |
 |------------|--------------------------------|----------------------------------------------------------|
-|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda102-cudnn80-trt71)|
-|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda102-cudnn80-trt72)|
-|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda110-cudnn80-trt71)|
-|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda110-cudnn80-trt72)|
-|Jetson      |JetPack 4.4                     |[link](https://developer.nvidia.com/cuda102-trt71-jp44)   |
-|Jetson      |JetPack 4.5                     |[link](https://developer.nvidia.com/cuda102-trt71-jp45)   |
+|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda102-trt71&data=04.01)|
+|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda102-cudnn80-trt72-0&data=04.01)|
+|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda110-cudnn80-trt71-0&data=04.01)|
+|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda110-rt72&data=04.01)|
+|x86 + GPU   |CUDA 11.1/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda111-cudnn80-trt72-0&data=04.01)|
+|x86 + GPU   |CUDA 11.3/cuDNN 8.0/TensorRT 8.0|[link](https://developer.nvidia.com/tao-converter-80&data=04.01)|
+|Jetson      |JetPack 4.4                     |[link](https://developer.nvidia.com/cuda102-trt71-jp44-0&data=04.01)   |
+|Jetson      |JetPack 4.5                     |[link](https://developer.nvidia.com/tao-converter-jp4.5&data=04.01)   |
+|Jetson      |JetPack 4.6                     |[link](https://developer.nvidia.com/jp46-20210820t231431z-001zip&data=04.01) |
+|Clara AGX   |CUDA 11.1/cuDNN 8.0.5/TensorRT 7.2.2|[link](https://developer.nvidia.com/tao-converter&data=04.01) |
 
 ## Download
 
@@ -69,15 +73,15 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 For US car plate recognition
 ```
     ./download_us.sh
-    // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tlt-converter
-    ./tlt-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
+    // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tao-converter
+    ./tao-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
            models/LP/LPR/us_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/lpr_us_onnx_b16.engine
 ```
 For Chinese car plate recognition
 ```
     ./download_ch.sh
-    // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tlt-converter
-    ./tlt-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
+    // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tao-converter
+    ./tao-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
            models/LP/LPR/ch_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/lpr_ch_onnx_b16.engine
 ```
 

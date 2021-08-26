@@ -1,10 +1,10 @@
-lpr-test-app should work with libnvdsinfer_custom_impl_lpr.so for the customized post-processing of the TLT LPR model.
+lpr-test-app should work with libnvdsinfer_custom_impl_lpr.so for the customized post-processing of the TAO LPR model.
 
 libnvdsinfer_custom_impl_lpr.so is built with nvinfer_custom_lpr_parser for car plate recognition.
 Copy the libnvdsinfer_custom_impl_lpr.so file to /opt/nvidia/deepstream/deepstream-5.0/lib/ folder after build.
 
-TLT LPR model trained for different country car plate OCR recognition with different language dictionary for car plate.
-Prepare the dictionary file for the OCR according to the trained TLT LPR model. The dictionary file name should be "dict.txt". In the dictionary file, one line for one character. 
+TAO LPR model trained for different country car plate OCR recognition with different language dictionary for car plate.
+Prepare the dictionary file for the OCR according to the trained TAO LPR model. The dictionary file name should be "dict.txt". In the dictionary file, one line for one character. 
 The format of the dictionary file can refer to the sample dictionary file of "dict_us.txt" and "dict_ch.txt" for US car plate recognition model and Chinese car plate recognition modle seperately.
 The dictionary file should be in the same directory of the built binary of lpr-test-app and the other config files.
 
