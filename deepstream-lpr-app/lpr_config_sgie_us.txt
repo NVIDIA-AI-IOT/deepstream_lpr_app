@@ -48,7 +48,7 @@
 
 [property]
 gpu-id=0
-#model-engine-file=../models/LP/LPR/us_lprnet_baseline18_deployable.etlt_b16_gpu0_fp16.engine
+model-engine-file=../models/LP/LPR/us_lprnet_baseline18_deployable.etlt_b16_gpu0_fp16.engine
 labelfile-path=../models/LP/LPR/labels_us.txt
 tlt-encoded-model=../models/LP/LPR/us_lprnet_baseline18_deployable.etlt
 tlt-model-key=nvidia_tlt
