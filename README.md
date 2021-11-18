@@ -67,6 +67,8 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 ```
 2. Prepare Models and TensorRT engine
 
+For DS 6.0 version, this step can be ignored.
+
 ```
     cd deepstream_lpr_app/
 ```
@@ -75,14 +77,14 @@ For US car plate recognition
     ./download_us.sh
     // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tao-converter
     ./tao-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
-           models/LP/LPR/us_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/lpr_us_onnx_b16.engine
+           models/LP/LPR/us_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/us_lprnet_baseline18_deployable.etlt_b16_gpu0_fp16.engine
 ```
 For Chinese car plate recognition
 ```
     ./download_ch.sh
     // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tao-converter
     ./tao-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
-           models/LP/LPR/ch_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/lpr_ch_onnx_b16.engine
+           models/LP/LPR/ch_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/ch_lprnet_baseline18_deployable.etlt_b16_gpu0_fp16.engine
 ```
 
 ## Build and Run

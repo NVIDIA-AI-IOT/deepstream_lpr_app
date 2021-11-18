@@ -48,8 +48,10 @@
 
 [property]
 gpu-id=0
-model-engine-file=../models/LP/LPR/lpr_ch_onnx_b16.engine
+model-engine-file=../models/LP/LPR/ch_lprnet_baseline18_deployable.etlt_b16_gpu0_fp16.engine
 labelfile-path=../models/LP/LPR/labels_ch.txt
+tlt-encoded-model=../models/LP/LPR/ch_lprnet_baseline18_deployable.etlt
+tlt-model-key=nvidia_tlt
 batch-size=16
 ## 0=FP32, 1=INT8, 2=FP16 mode
 network-mode=2
