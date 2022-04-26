@@ -118,7 +118,7 @@ bool NvDsInferParseCustomNVPlate(std::vector<NvDsInferLayerInfo> const &outputLa
        // Do softmax
        if (do_softmax) {
            do_softmax = false;
-           bank_softmax_max[valid_bank_count] = outputConfBuffer[curr_data];
+           bank_softmax_max[valid_bank_count] = outputConfBuffer[seq_id];
            valid_bank_count++;
        }
     }
