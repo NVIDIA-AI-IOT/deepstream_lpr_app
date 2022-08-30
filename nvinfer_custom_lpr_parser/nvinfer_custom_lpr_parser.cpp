@@ -103,6 +103,9 @@ bool NvDsInferParseCustomNVPlate(std::vector<NvDsInferLayerInfo> const &outputLa
        do_softmax = false;
 
        int curr_data = outputStrBuffer[seq_id];
+           if(curr_data < 0 || curr_data > static_cast<int>(dict_table.size())){
+                   continue;
+           }
        if (seq_id == 0) {
            prev = curr_data;
            str_idxes.push_back(curr_data);

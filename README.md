@@ -31,30 +31,18 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 |Jetson Nano|     1             |     1      | 9.2       |
 |Jetson NX  |     3             |     3      | 80.31     |
 |Jetson Xavier |  5             |     5      | 146.43    |
+|Jetson Orin|     5             |     5      | 341.65    |
 |T4         |     14            |     14     | 447.15    |
 
 ## Prerequisition
 
-* [DeepStream SDK 5.0.1](https://developer.nvidia.com/deepstream-getting-started)
+* [DeepStream SDK 6.0 or above](https://developer.nvidia.com/deepstream-getting-started)
 
   Make sure deepstream-test1 sample can run successful to verify your DeepStream installation
-  
-* [tao-converter](https://developer.nvidia.com/tao-toolkit-get-started)
 
-  Download x86 or Jetson tao-converter which is compatible to your platform from the following links.
+* [tao-converter](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/resources/tao-converter/version)
 
-| Platform   |  Compute                       |        Link                                              |
-|------------|--------------------------------|----------------------------------------------------------|
-|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda102-trt71&data=04.01)|
-|x86 + GPU   |CUDA 10.2/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda102-cudnn80-trt72-0&data=04.01)|
-|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.1|[link](https://developer.nvidia.com/cuda110-cudnn80-trt71-0&data=04.01)|
-|x86 + GPU   |CUDA 11.0/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda110-rt72&data=04.01)|
-|x86 + GPU   |CUDA 11.1/cuDNN 8.0/TensorRT 7.2|[link](https://developer.nvidia.com/cuda111-cudnn80-trt72-0&data=04.01)|
-|x86 + GPU   |CUDA 11.3/cuDNN 8.0/TensorRT 8.0|[link](https://developer.nvidia.com/tao-converter-80&data=04.01)|
-|Jetson      |JetPack 4.4                     |[link](https://developer.nvidia.com/cuda102-trt71-jp44-0&data=04.01)   |
-|Jetson      |JetPack 4.5                     |[link](https://developer.nvidia.com/tao-converter-jp4.5&data=04.01)   |
-|Jetson      |JetPack 4.6                     |[link](https://developer.nvidia.com/jp46-20210820t231431z-001zip&data=04.01) |
-|Clara AGX   |CUDA 11.1/cuDNN 8.0.5/TensorRT 7.2.2|[link](https://developer.nvidia.com/tao-converter&data=04.01) |
+  Download x86 or Jetson tao-converter which is compatible to your platform from the links in https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/resources/tao-converter/version.
 
 ## Download
 
@@ -67,24 +55,51 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 ```
 2. Prepare Models and TensorRT engine
 
-For DS 6.0 version, this step can be ignored.
+All models can be downloaded with the following commands:
 
 ```
     cd deepstream_lpr_app/
 ```
 For US car plate recognition
 ```
-    ./download_us.sh
-    // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tao-converter
-    ./tao-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
-           models/LP/LPR/us_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/us_lprnet_baseline18_deployable.etlt_b16_gpu0_fp16.engine
+    ./download_convert.sh us 0  #if DeepStream SDK 5.0.1, use ./download_convert.sh us 1
 ```
 For Chinese car plate recognition
 ```
-    ./download_ch.sh
-    // DS5.0.1 gst-nvinfer cannot generate TRT engine for LPR model, so generate it with tao-converter
-    ./tao-converter -k nvidia_tlt -p image_input,1x3x48x96,4x3x48x96,16x3x48x96 \
-           models/LP/LPR/ch_lprnet_baseline18_deployable.etlt -t fp16 -e models/LP/LPR/ch_lprnet_baseline18_deployable.etlt_b16_gpu0_fp16.engine
+    ./download_convert.sh ch 0  #if DeepStream SDK 5.0.1, use ./download_convert.sh ch 1
+```
+
+## Prepare Models for Trtion Server
+From DeepStream 6.1, LPR sample app support nvinferserver based Triton Inference Server. To enable Triton server functions, follow the below steps:
+
+Generate model engines
+```
+    //For US car plate recognition
+    ./prepare_triton_us.sh
+
+    //For Chinese car plate recognition
+    ./prepare_triton_ch.sh
+```
+
+Start Triton docker for x86
+```
+    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/ds-lpr-sample:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
+```
+
+Start Triton server(only for X86 Trtion gRPC mode)
+
+A new terminal is needed to start the Triton server.
+```
+    //start Triton docker, 10001:8001 is used to map docker container's 8000 port to host's 10000 port, these ports can be changed.
+    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -p 10000:8000 -p 10001:8001 -p 10002:8002  -v $(pwd)/ds-lpr-sample:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
+
+    //start tritonserver
+    tritonserver --model-repository=/code/triton_models --strict-model-config=false --grpc-infer-allocation-pool-size=16 --log-verbose=1
+
+    //correct Triton gRPC url, open files in deepstream-lpr-app/triton-grpc, fill the actual grpc url, like this:
+    grpc {
+        url: "10.23.xx.xx:10001"
+    }
 ```
 
 ## Build and Run
@@ -103,19 +118,84 @@ For Chinese car plate recognition
 Start to run the application
 ```
     ./deepstream-lpr-app <1:US car plate model|2: Chinese car plate model> \
-         <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|1:ROI enable> \
+         <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|1:ROI enable> <infer|triton|tritongrpc> \
          <input mp4 file name> ... <input mp4 file name> <output file name>
 ```
+Or run with YAML config file.
+```
+    ./deepstream-lpr-app <app YAML config file>
+```
+
+### Samples
+
+1. use nvinfer to run app
+
 A sample of US car plate recognition:
 
-`./deepstream-lpr-app 1 2 0 us_car_test2.mp4 us_car_test2.mp4 output.264`
+```
+    ./deepstream-lpr-app 1 2 0 infer us_car_test2.mp4 us_car_test2.mp4 output.264
+```
+
+Or run with YAML config file.
+```
+    ./deepstream-lpr-app lpr_app_infer_us_config.yml
+```
 
 A sample of Chinese car plate recognition:
 
-`./deepstream-lpr-app 2 2 0 ch_car_test.mp4 ch_car_test.mp4 output.264`
+```
+    ./deepstream-lpr-app 2 2 0 infer ch_car_test.mp4 ch_car_test.mp4 output.264
+ ```
+
+2. use nvinferserver to run app(only for Triton native)
+
+A sample of US car plate recognition:
+```
+    ./deepstream-lpr-app 1 2 0 triton us_car_test2.mp4 us_car_test2.mp4 output.264
+```
+
+Or run with YAML config file after modify triton part in yml file.
+```
+    ./deepstream-lpr-app lpr_app_triton_us_config.yml
+```
+
+A sample of Chinese car plate recognition:
+```
+    ./deepstream-lpr-app 2 2 0 triton us_car_test2.mp4 us_car_test2.mp4 output.264
+```
+
+Or run with YAML config file after modify triton part in yml file.
+```
+    ./deepstream-lpr-app lpr_app_triton_ch_config.yml
+```
+
+3. Run nvinferserver case with X86 Triton gRPC)
+
+A sample of US car plate recognition:
+```
+    ./deepstream-lpr-app 1 2 0 tritongrpc us_car_test2.mp4 us_car_test2.mp4 output.264
+```
+
+Or run with YAML config file after modify triton part in yml file.
+```
+    ./deepstream-lpr-app lpr_app_tritongrpc_us_config.yml
+```
+
+A sample of Chinese car plate recognition:
+```
+    ./deepstream-lpr-app 2 2 0 tritongrpc us_car_test2.mp4 us_car_test2.mp4 output.264
+```
+
+Or run with YAML config file after modify triton part in yml file.
+```
+    ./deepstream-lpr-app lpr_app_tritongrpc_ch_config.yml
+```
 
 ## Notice
 1. This sample application only support mp4 files which contain H264 videos as input files.
 2. For Chinese plate recognition, please make sure the OS supports Chinese language.
 3. The second argument of deepstream-lpr-app should be 2(fakesink) for performance test.
 4. The trafficcamnet and LPD models are all INT8 models, the LPR model is FP16 model.
+5. There is a bug for Triton gprc mode: the first two character can't be recognized.
+6. For some yolo models, some layers of the models should use FP32 precision. This is a network characteristics that the accuracy drops rapidly when maximum layers are run in INT8 precision. Please refer the [layer-device-precision](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvinfer.html) for more details.
+

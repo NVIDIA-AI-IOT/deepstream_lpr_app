@@ -15,6 +15,13 @@ wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v1.0
 wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v1.0/files/ccpd_label.txt
 cd -
 
+# Download LPD yolov4-tiny model
+mkdir -p ./models/tao_pretrained_models/yolov4-tiny
+cd ./models/tao_pretrained_models/yolov4-tiny
+wget 'https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v2.1/files/yolov4_tiny_ccpd_deployable.etlt'
+wget 'https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v2.1/files/yolov4_tiny_ccpd_cal.bin'
+cd -
+
 # Download LPR model
 mkdir -p ./models/LP/LPR
 cd ./models/LP/LPR

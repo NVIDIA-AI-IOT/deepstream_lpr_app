@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -39,7 +39,8 @@ INCS:= $(wildcard *.h)
 PKGS:= gstreamer-1.0
 
 ##OBJS:= $(SRCS:.c=.o)
-OBJS:= deepstream_lpr_app.o deepstream_nvdsanalytics_meta.o
+OBJS:= deepstream_lpr_app.o deepstream_nvdsanalytics_meta.o \
+       ds_yml_parse.o
 
 CFLAGS+= -I/opt/nvidia/deepstream/deepstream/sources/includes
 
@@ -47,10 +48,11 @@ CFLAGS+= `pkg-config --cflags $(PKGS)`
 
 CFLAGS+= -D_GLIBCXX_USE_CXX11_ABI=1
 
+CFLAGS+= -Wno-error
 LIBS:= `pkg-config --libs $(PKGS)`
 
 LIBS+= -L$(LIB_INSTALL_DIR) -lnvdsgst_meta -lnvds_meta -lm -lstdc++\
-       -Wl,-rpath,$(LIB_INSTALL_DIR)
+       -lnvds_yml_parser -lyaml-cpp -lgstrtspserver-1.0 -Wl,-rpath,$(LIB_INSTALL_DIR)
 
 all: $(APP)
 
@@ -61,6 +63,9 @@ deepstream_lpr_app.o: deepstream_lpr_app.c $(INCS) Makefile
 	$(CXX) -c -o $@ -fpermissive -Wall -Werror $(CFLAGS) $<
 
 deepstream_nvdsanalytics_meta.o: deepstream_nvdsanalytics_meta.cpp $(INCS) Makefile
+	$(CXX) -c -o $@ -Wall -Werror $(CFLAGS) $<
+
+ds_yml_parse.o: ds_yml_parse.cpp $(INCS) Makefile
 	$(CXX) -c -o $@ -Wall -Werror $(CFLAGS) $<
 
 $(APP): $(OBJS) Makefile

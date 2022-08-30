@@ -12,11 +12,23 @@ This sample only support MP4 files with h264 video.
 
 The command line is:
 
-./deepstream-lpr-app <1:US car plate model|2: Chinese car plate model> <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|1:ROI enable> <input mp4 file name> ... <input mp4 file name> <output file name>
+./deepstream-lpr-app <1:US car plate model|2: Chinese car plate model> <1: output as h264 file| 2:fakesink 3:display output> <0:ROI disable|1:ROI enable> <infer|triton|tritongrpc> <input mp4 file name> ... <input mp4 file name> <output file name>
+
+start nvinfer inference by yaml file:
+./deepstream-lpr-app lpr_app_infer_us_config.yml
+or ./deepstream-lpr-app lpr_app_infer_ch_config.yml
+
+start nvinferserver CAPI inference by yaml file:
+./deepstream-lpr-app lpr_app_triton_us_config.yml
+or ./deepstream-lpr-app lpr_app_triton_ch_config.yml
+
+start nvinferserver gRPC inference by yaml file:
+or ./deepstream-lpr-app lpr_app_tritongrpc_us_config.yml
+or ./deepstream-lpr-app lpr_app_tritongrpc_ch_config.yml
 
 For example:
 Current default sample of U.S.A plate recognition, e.g. the command line for 16 streams recognition is:
-./deepstream-lpr-app 1 2 0 <input file 0> <input file 1> <input file 2> <input file 3> <input file 4> <input file 5> <input file 6> <input file 7> <input file 8> <input file 9> <input file 10> <input file 11> <input file 12> <input file 13> <input file 14> <input file 15> <output file name>             
+./deepstream-lpr-app 1 2 0 infer <input file 0> <input file 1> <input file 2> <input file 3> <input file 4> <input file 5> <input file 6> <input file 7> <input file 8> <input file 9> <input file 10> <input file 11> <input file 12> <input file 13> <input file 14> <input file 15> <output file name>
 
 For Chinese plate recognition, please make sure the Chinese language support is in the OS.
 For example:

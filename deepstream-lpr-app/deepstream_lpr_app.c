@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2020-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -31,6 +31,9 @@
 #include "gstnvdsmeta.h"
 #include "gst-nvmessage.h"
 #include "nvdsmeta.h"
+#include <gst/rtsp-server/rtsp-server.h>
+#include "nvds_yml_parser.h"
+#include "ds_yml_parse.h"
 
 #define MAX_DISPLAY_LEN 64
 
@@ -58,6 +61,9 @@
 #define CONFIG_GROUP_TRACKER_LL_LIB_FILE "ll-lib-file"
 #define CONFIG_GROUP_TRACKER_ENABLE_BATCH_PROCESS "enable-batch-process"
 #define CONFIG_GPU_ID "gpu-id"
+#define TRITON  "triton"
+#define NVINFER_LPD_CH_CFG "lpd_yolov4-tiny_ch.txt"
+#define NVINFER_LDP_US_CFG "lpd_yolov4-tiny_us.txt"
 
 gint frame_number = 0;
 gint total_plate_number = 0;
@@ -417,7 +423,6 @@ nvdsanalytics_src_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
   return GST_PAD_PROBE_OK;
 }
 
-
 int
 main (int argc, char *argv[])
 {
@@ -433,6 +438,9 @@ main (int argc, char *argv[])
              *queue9 = NULL, *queue10 = NULL;
   GstElement *h264parser[128], *source[128], *decoder[128], *mp4demux[128],
              *parsequeue[128];
+  char pgie_cfg_file_path[256] = {0};
+  char lpd_cfg_file_path[256] = {0};
+  char lpr_cfg_file_path[256] = {0};
 #ifdef PLATFORM_TEGRA
   GstElement *transform = NULL;
 #endif
@@ -450,20 +458,55 @@ main (int argc, char *argv[])
   GstPad *sinkpad, *srcpad;
   gchar pad_name_sink[16] = "sink_0";
   gchar pad_name_src[16] = "src";
+
+  bool isYAML=false;
+  bool isH264=true;
+  GList* g_list = NULL;
+  GList* iterator = NULL;
     
+  const char*  ptriton = "triton";
+  const char*  ptriton_grpc = "tritongrpc";
+  const char *infer_plugin = "nvinfer";
+  gboolean use_nvinfer_server = false;
+  gboolean use_triton_grpc = false;
+  guint car_mode = 1;
   /* Check input arguments */
-  if (argc < 6 || argc > 133 || (atoi(argv[1]) != 1 && atoi(argv[1]) != 2) ||
+  if (argc == 2 && (g_str_has_suffix(argv[1], ".yml")
+      || (g_str_has_suffix(argv[1], ".yaml")))) {
+    isYAML=TRUE;
+  } else if (argc < 6 || argc > 133 || (atoi(argv[1]) != 1 && atoi(argv[1]) != 2) ||
      (atoi(argv[2]) != 1 && atoi(argv[2]) != 2 && atoi(argv[2]) != 3) ||
-     (atoi(argv[3]) != 1 && atoi(argv[3]) != 0) ) {
+     (atoi(argv[3]) != 1 && atoi(argv[3]) != 0) ||
+     (strcmp("infer", argv[4]) && strcmp(ptriton, argv[4])
+      && strcmp(ptriton_grpc, argv[4]))) {
     g_printerr ("Usage: %s [1:us model|2: ch_model] [1:file sink|2:fakesink|"
-        "3:display sink] [0:ROI disable|0:ROI enable] <In mp4 filename> <in mp4 filename> ... "
+        "3:display sink] [0:ROI disable|0:ROI enable] [infer|triton|tritongrpc] <In mp4 filename> <in mp4 filename> ... "
         "<out H264 filename>\n", argv[0]);
     return -1;
   }
 
   //For Chinese language supporting
   setlocale(LC_CTYPE, "");
+  if (isYAML) {
+    if(ds_parse_group_enable(argv[1], TRITON)){
+      use_nvinfer_server = true;
+      infer_plugin = "nvinferserver";
 
+      if(ds_parse_group_type(argv[1], TRITON) == 1){
+        use_triton_grpc = true;
+      }
+    }
+
+  } else {
+    if (!strcmp(ptriton, argv[4])|| !strcmp(ptriton_grpc, argv[4])) {
+      use_nvinfer_server = true;
+      infer_plugin = "nvinferserver";
+      if(!strcmp(ptriton_grpc, argv[4])){
+        use_triton_grpc = true;
+      }
+    }
+  }
+  g_print("use_nvinfer_server:%d, use_triton_grpc:%d\n", use_nvinfer_server, use_triton_grpc);
   /* Standard GStreamer initialization */
   gst_init (&argc, &argv);
   loop = g_main_loop_new (NULL, FALSE);
@@ -485,9 +528,20 @@ main (int argc, char *argv[])
   }
 
   gst_bin_add (GST_BIN(pipeline), streammux);
+
+  if(!isYAML) {
+    for (src_cnt=0; src_cnt<(guint)argc-6; src_cnt++) {
+      g_list = g_list_append(g_list, argv[src_cnt + 5]);
+    }
+  } else {
+      if (NVDS_YAML_PARSER_SUCCESS != nvds_parse_source_list(&g_list, argv[1], "source-list")) {
+        g_printerr ("No source is found. Exiting.\n");
+        return -1;
+      }
+  }
   
   /* Multiple source files */
-  for (src_cnt=0; src_cnt<(guint)argc-5; src_cnt++) {
+  for (iterator = g_list, src_cnt=0; iterator; iterator = iterator->next,src_cnt++) {
     /* Only h264 element stream with mp4 container is supported. */
     g_snprintf (ele_name, 64, "file_src_%d", src_cnt);
 
@@ -551,20 +605,21 @@ main (int argc, char *argv[])
 
     /* we set the input filename to the source element */
     g_object_set (G_OBJECT (source[src_cnt]), "location",
-        argv[4+src_cnt], NULL);
+        (gchar *)iterator->data, NULL);
 
     gst_object_unref (sinkpad);
     gst_object_unref (srcpad);
   }
+  g_list_free(g_list);
 
   /* Create three nvinfer instances for two detectors and one classifier*/
-  primary_detector = gst_element_factory_make ("nvinfer",
+  primary_detector = gst_element_factory_make (infer_plugin,
                        "primary-infer-engine1");
 
-  secondary_detector = gst_element_factory_make ("nvinfer",
+  secondary_detector = gst_element_factory_make (infer_plugin,
                           "secondary-infer-engine1");
 
-  secondary_classifier = gst_element_factory_make ("nvinfer",
+  secondary_classifier = gst_element_factory_make (infer_plugin,
                            "secondary-infer-engine2");
 
   /* Use convertor to convert from NV12 to RGBA as required by nvosd */
@@ -575,7 +630,17 @@ main (int argc, char *argv[])
 
   nvvidconv1 = gst_element_factory_make ("nvvideoconvert", "nvvid-converter1");
 
-  nvh264enc = gst_element_factory_make ("nvv4l2h264enc" ,"nvvideo-h264enc");
+  if (isYAML) {
+      if (!ds_parse_enc_type(argv[1], "output"))
+          isH264 = true;
+      else
+          isH264 = false;
+  }
+
+  if (isH264)
+      nvh264enc = gst_element_factory_make ("nvv4l2h264enc" ,"nvvideo-h264enc");
+  else
+      nvh264enc = gst_element_factory_make ("nvv4l2h265enc" ,"nvvideo-h265enc");
 
   capfilt = gst_element_factory_make ("capsfilter", "nvvideo-caps");
 
@@ -597,11 +662,18 @@ main (int argc, char *argv[])
   queue9 = gst_element_factory_make ("queue", "queue9");
   queue10 = gst_element_factory_make ("queue", "queue10");
 
-  if (atoi(argv[2]) == 1)
+  guint output_type = 2;
+
+  if (isYAML)
+      output_type = ds_parse_group_type(argv[1], "output");
+  else
+      output_type = atoi(argv[2]);
+
+  if (output_type == 1)
     sink = gst_element_factory_make ("filesink", "nvvideo-renderer");
-  else if (atoi(argv[2]) == 2)
+  else if (output_type == 2)
     sink = gst_element_factory_make ("fakesink", "fake-renderer");
-  else if (atoi(argv[2]) == 3) {
+  else if (output_type == 3) {
 #ifdef PLATFORM_TEGRA
     transform = gst_element_factory_make ("nvegltransform", "nvegltransform");
     if(!transform) {
@@ -634,31 +706,64 @@ main (int argc, char *argv[])
    * detects the cars. The first SGIE detects car plates from the cars and the
    * second SGIE classifies the caracters in the car plate to identify the car
    * plate string. */
-  g_object_set (G_OBJECT (primary_detector), "config-file-path",
-      "trafficamnet_config.txt",
-      "unique-id", PRIMARY_DETECTOR_UID, NULL);
+  if (isYAML) {
+    if(!use_nvinfer_server){
+        nvds_parse_gie (primary_detector, argv[1], "primary-gie");
+        nvds_parse_gie (secondary_detector, argv[1], "secondary-gie-0");
+        nvds_parse_gie (secondary_classifier, argv[1], "secondary-gie-1");
+    } else {
+        car_mode = ds_parse_group_car_mode(argv[1], "triton");
+        get_triton_yml(car_mode, use_triton_grpc, pgie_cfg_file_path, lpd_cfg_file_path, lpr_cfg_file_path, 256);
+        g_object_set (G_OBJECT (primary_detector), "config-file-path", pgie_cfg_file_path, "unique-id",
+            PRIMARY_DETECTOR_UID, "batch-size", 1, NULL);
+        g_object_set (G_OBJECT (secondary_detector), "config-file-path", lpd_cfg_file_path, "unique-id",
+           SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
+        g_object_set (G_OBJECT (secondary_classifier), "config-file-path", lpr_cfg_file_path, "unique-id",
+           SECONDARY_CLASSIFIER_UID, "process-mode", 2, NULL);
+    }
+  } else {
+    if(!use_nvinfer_server){
+        g_object_set (G_OBJECT (primary_detector), "config-file-path",
+          "trafficamnet_config.txt",
+          "unique-id", PRIMARY_DETECTOR_UID, NULL);
 
-  if (atoi(argv[1]) == 1) {
-    g_object_set (G_OBJECT (secondary_detector), "config-file-path",
-        "lpd_us_config.txt", "unique-id",
-        SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
-    g_object_set (G_OBJECT (secondary_classifier), "config-file-path",
-        "lpr_config_sgie_us.txt", "unique-id", SECONDARY_CLASSIFIER_UID,
-        "process-mode", 2, NULL);
-  } else if (atoi(argv[1]) == 2) {
-    g_object_set (G_OBJECT (secondary_detector), "config-file-path",
-        "lpd_ccpd_config.txt", "unique-id",
-        SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
-    g_object_set (G_OBJECT (secondary_classifier), "config-file-path",
-        "lpr_config_sgie_ch.txt", "unique-id", SECONDARY_CLASSIFIER_UID,
-        "process-mode", 2, NULL);
+        if (atoi(argv[1]) == 1) {
+          g_object_set (G_OBJECT (secondary_detector), "config-file-path",
+            NVINFER_LDP_US_CFG, "unique-id",
+            SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
+          g_object_set (G_OBJECT (secondary_classifier), "config-file-path",
+            "lpr_config_sgie_us.txt", "unique-id", SECONDARY_CLASSIFIER_UID,
+            "process-mode", 2, NULL);
+        } else if (atoi(argv[1]) == 2) {
+          g_object_set (G_OBJECT (secondary_detector), "config-file-path",
+            NVINFER_LPD_CH_CFG, "unique-id",
+            SECONDARY_DETECTOR_UID, "process-mode", 2, NULL);
+          g_object_set (G_OBJECT (secondary_classifier), "config-file-path",
+            "lpr_config_sgie_ch.txt", "unique-id", SECONDARY_CLASSIFIER_UID,
+            "process-mode", 2, NULL);
+        }
+     } else{
+        car_mode = atoi(argv[1]);
+        get_triton_yml(car_mode, use_triton_grpc, pgie_cfg_file_path, lpd_cfg_file_path, lpr_cfg_file_path, 256);
+        g_object_set (G_OBJECT (primary_detector), "config-file-path", pgie_cfg_file_path,
+                    "unique-id", PRIMARY_DETECTOR_UID,"batch-size", 1, NULL);
+              g_object_set (G_OBJECT (secondary_detector), "config-file-path",
+                    lpd_cfg_file_path, "unique-id",
+                    SECONDARY_DETECTOR_UID, NULL);
+              g_object_set (G_OBJECT (secondary_classifier), "config-file-path",
+                    lpr_cfg_file_path, "unique-id", SECONDARY_CLASSIFIER_UID, NULL);
+    }
   }
 
-  char name[300];
-  snprintf(name, 300, "lpr_sample_tracker_config.txt");
-  if (!set_tracker_properties(tracker, name)) {
-    g_printerr ("Failed to set tracker1 properties. Exiting.\n");
-    return -1;
+  if (isYAML) {
+      nvds_parse_tracker(tracker, argv[1], "tracker");
+  } else {
+    char name[300];
+    snprintf(name, 300, "lpr_sample_tracker_config.txt");
+    if (!set_tracker_properties(tracker, name)) {
+      g_printerr ("Failed to set tracker1 properties. Exiting.\n");
+      return -1;
+    }
   }
 
   caps =
@@ -679,27 +784,43 @@ main (int argc, char *argv[])
       tracker, nvdsanalytics, queue1, queue2, queue3, queue4, queue5, queue6,
       queue7, queue8, secondary_classifier, nvvidconv, nvosd, nvtile, sink,
       NULL);
-
-  if (atoi(argv[3]) == 0) {
-    if (!gst_element_link_many (streammux, queue1, primary_detector, queue2,
-          tracker, queue3, secondary_detector, queue5,
-          secondary_classifier, queue6, nvtile, queue7, nvvidconv, queue8,
-          nvosd, NULL)) {
-      g_printerr ("Inferring and tracking elements link failure.\n");
-      return -1;
-    }
+  if (isYAML) {
+      g_print("set analy config\n");
+      if (!ds_parse_file_name(argv[1], "analytics-config"))
+          g_object_set (G_OBJECT (nvdsanalytics), "enable", FALSE, NULL);
   } else {
-    if (!gst_element_link_many (streammux, queue1, primary_detector, queue2,
-         tracker, queue3, nvdsanalytics, queue4, secondary_detector, queue5,
-         secondary_classifier, queue6, nvtile, queue7, nvvidconv, queue8,
-         nvosd, NULL)) {
-      g_printerr ("Inferring and tracking elements link failure.\n");
-      return -1;
+    if (atoi(argv[3]) == 0) {
+      g_object_set (G_OBJECT (nvdsanalytics), "enable", FALSE, NULL);
+    } else {
+      g_object_set (G_OBJECT (nvdsanalytics), "enable", TRUE, NULL);
     }
   }
+  if (!gst_element_link_many (streammux, queue1, primary_detector, queue2,
+      tracker, queue3, nvdsanalytics, queue4, secondary_detector, queue5,
+      secondary_classifier, queue6, nvtile, queue7, nvvidconv, queue8,
+      nvosd, NULL)) {
+      g_printerr ("Inferring and tracking elements link failure.\n");
+      return -1;
+  }
 
-  if (atoi(argv[2]) == 1) {
-    g_object_set (G_OBJECT (sink), "location", argv[argc-1],NULL);
+  if (output_type == 1) {
+    gchar *filepath = NULL;
+    if (isYAML) {
+        GString * output_file =
+          ds_parse_file_name(argv[1], "output");
+        if (isH264)
+            filepath = g_strconcat(output_file->str,".264",NULL);
+        else
+            filepath = g_strconcat(output_file->str,".265",NULL);
+        ds_parse_enc_config(nvh264enc, argv[1], "output");
+    } else {
+        filepath = g_strconcat(argv[argc-1],".264",NULL);
+    }
+    if(use_nvinfer_server){
+        g_object_set (G_OBJECT (sink), "async", FALSE, NULL);
+        g_object_set (G_OBJECT (sink), "sync", TRUE, NULL);
+    }
+    g_object_set (G_OBJECT (sink), "location", filepath, NULL);
     gst_bin_add_many (GST_BIN (pipeline), nvvidconv1, nvh264enc, capfilt, 
         queue9, queue10, NULL);
 
@@ -708,13 +829,13 @@ main (int argc, char *argv[])
       g_printerr ("OSD and sink elements link failure.\n");
       return -1;
     }
-  } else if (atoi(argv[2]) == 2) {
+  } else if (output_type == 2) {
     g_object_set (G_OBJECT (sink), "sync", 0, "async", false,NULL);
     if (!gst_element_link (nvosd, sink)) {
       g_printerr ("OSD and sink elements link failure.\n");
       return -1;
     }
-  } else if (atoi(argv[2]) == 3) {
+  } else if (output_type == 3) {
 #ifdef PLATFORM_TEGRA
     gst_bin_add_many (GST_BIN (pipeline), transform, queue9, NULL);
     if (!gst_element_link_many (nvosd, queue9, transform, sink, NULL)) {
