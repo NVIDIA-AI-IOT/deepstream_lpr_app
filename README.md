@@ -72,7 +72,7 @@ For Chinese car plate recognition
     ./download_convert.sh ch 0  #if DeepStream SDK 5.0.1, use ./download_convert.sh ch 1
 ```
 
-## Inferencing Mode
+## Prepare Triton Server
 From DeepStream 6.1, LPR sample application supports three inferencing modes:
 * gst-nvinfer inferencing based on TensorRT
 * gst-nvinferserver inferencing as Triton CAPI client(only for x86)
@@ -82,7 +82,7 @@ The following steps are only needed for the LPR sample application working with 
 
 1. Start Triton Server with DeepStream Triton container, the docker should be run in a new terminal and the following commands should be run in the same path as the deepstream_lpr_app codes are downloaded:
 * For LPR sample application works as Triton CAPI client
-`
+```
     docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/deepstream_lpr_app:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
 ```
 * For LPR sample application works as Triton gRPC client
