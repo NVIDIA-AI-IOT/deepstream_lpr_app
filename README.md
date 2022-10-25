@@ -43,6 +43,8 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 * [tao-converter](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/resources/tao-converter/version)
 
   Download x86 or Jetson tao-converter which is compatible to your platform from the links in https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/resources/tao-converter/version.
+* [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server)
+  The LPR sample application can work as Triton client on x86 platforms.
 
 ## Download
 
@@ -69,29 +71,23 @@ For Chinese car plate recognition
     ./download_convert.sh ch 0  #if DeepStream SDK 5.0.1, use ./download_convert.sh ch 1
 ```
 
-## Prepare Models for Trtion Server
-From DeepStream 6.1, LPR sample app support nvinferserver based Triton Inference Server. To enable Triton server functions, follow the below steps:
+## Inferencing Mode
+From DeepStream 6.1, LPR sample application supports three inferencing modes:
+* gst-nvinfer inferencing based on TensorRT
+* gst-nvinferserver inferencing as Triton CAPI client(only for x86)
+* gst-nvinferserver inferencing as Triton gRPC client(only for x86)
 
-Generate model engines
+The following steps are only needed for the LPR sample application working with gst-nvinferserver inferencing on x86 platforms. For LPR sample application works with nvinfer mode, please go to [Build and Run](#build-and-run) part directly.
+
+1. Start Triton Server with DeepStream Triton container, the docker should be run in a new terminal and the following commands should be run in the same path as the deepstream_lpr_app codes are downloaded:
+* For LPR sample application works as Triton CAPI client
+`
+    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/deepstream_lpr_app:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
 ```
-    //For US car plate recognition
-    ./prepare_triton_us.sh
-
-    //For Chinese car plate recognition
-    ./prepare_triton_ch.sh
-```
-
-Start Triton docker for x86
-```
-    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/ds-lpr-sample:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
-```
-
-Start Triton server(only for X86 Trtion gRPC mode)
-
-A new terminal is needed to start the Triton server.
+* For LPR sample application works as Triton gRPC client
 ```
     //start Triton docker, 10001:8001 is used to map docker container's 8000 port to host's 10000 port, these ports can be changed.
-    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -p 10000:8000 -p 10001:8001 -p 10002:8002  -v $(pwd)/ds-lpr-sample:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
+    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -p 10000:8000 -p 10001:8001 -p 10002:8002  -v $(pwd)/deepstream_lpr_app:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
 
     //start tritonserver
     tritonserver --model-repository=/code/triton_models --strict-model-config=false --grpc-infer-allocation-pool-size=16 --log-verbose=1
@@ -102,7 +98,17 @@ A new terminal is needed to start the Triton server.
     }
 ```
 
+2. After the docker start to run, the following steps are needed to generate model engines inside docker:
+```
+    //For US car plate recognition
+    ./prepare_triton_us.sh
+
+    //For Chinese car plate recognition
+    ./prepare_triton_ch.sh
+```
+
 ## Build and Run
+For the The following steps should run in host machine if the LPR sample application works as Triton client.
 ```
     make
     cd deepstream-lpr-app
@@ -128,7 +134,7 @@ Or run with YAML config file.
 
 ### Samples
 
-1. use nvinfer to run app
+1. Application works with nvinfer
 
 A sample of US car plate recognition:
 
@@ -147,7 +153,7 @@ A sample of Chinese car plate recognition:
     ./deepstream-lpr-app 2 2 0 infer ch_car_test.mp4 ch_car_test.mp4 output.264
  ```
 
-2. use nvinferserver to run app(only for Triton native)
+2. Application works with nvinferserver(Triton native samples)
 
 A sample of US car plate recognition:
 ```
@@ -169,7 +175,7 @@ Or run with YAML config file after modify triton part in yml file.
     ./deepstream-lpr-app lpr_app_triton_ch_config.yml
 ```
 
-3. Run nvinferserver case with X86 Triton gRPC)
+3. Application works with nvinferserver(Triton gRPC samples)
 
 A sample of US car plate recognition:
 ```
