@@ -83,15 +83,15 @@ The following steps are only needed for the LPR sample application working with 
 1. Start Triton Server with DeepStream Triton container, the docker should be run in a new terminal and the following commands should be run in the same path as the deepstream_lpr_app codes are downloaded:
 * For LPR sample application works as Triton CAPI client
 ```
-    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/deepstream_lpr_app:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
+    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/deepstream_lpr_app:/lpr   -e DISPLAY=$DISPLAY -w /lpr nvcr.io/nvidia/deepstream:6.1-triton
 ```
 * For LPR sample application works as Triton gRPC client
 ```
     //start Triton docker, 10001:8001 is used to map docker container's 8000 port to host's 10000 port, these ports can be changed.
-    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -p 10000:8000 -p 10001:8001 -p 10002:8002  -v $(pwd)/deepstream_lpr_app:/code   -e DISPLAY=$DISPLAY -w /code nvcr.io/nvidia/deepstream:6.1-triton
+    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -p 10000:8000 -p 10001:8001 -p 10002:8002  -v $(pwd)/deepstream_lpr_app:/lpr   -e DISPLAY=$DISPLAY -w /lpr nvcr.io/nvidia/deepstream:6.1-triton
 
     //start tritonserver
-    tritonserver --model-repository=/code/triton_models --strict-model-config=false --grpc-infer-allocation-pool-size=16 --log-verbose=1
+    tritonserver --model-repository=/lpr/triton_models --strict-model-config=false --grpc-infer-allocation-pool-size=16 --log-verbose=1
 
     //correct Triton gRPC url, open files in deepstream-lpr-app/triton-grpc, fill the actual grpc url, like this:
     grpc {
