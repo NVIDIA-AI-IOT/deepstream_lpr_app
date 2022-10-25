@@ -44,6 +44,7 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 
   Download x86 or Jetson tao-converter which is compatible to your platform from the links in https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/resources/tao-converter/version.
 * [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server)
+ 
   The LPR sample application can work as Triton client on x86 platforms.
 
 ## Download
