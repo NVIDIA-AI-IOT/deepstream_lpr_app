@@ -29,7 +29,7 @@ infer_config {
       model_name: "US_LPD"
       version: -1
       grpc {
-        url: "127.0.0.1:8001"
+        url: "127.0.0.1:10001"
       }
     }
   }

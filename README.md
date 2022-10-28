@@ -56,7 +56,7 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
     // or HTTPS
     git clone https://github.com/NVIDIA-AI-IOT/deepstream_lpr_app.git
 ```
-2. Prepare Models and TensorRT engine
+2. Prepare Models
 
 All models can be downloaded with the following commands:
 
@@ -78,38 +78,15 @@ From DeepStream 6.1, LPR sample application supports three inferencing modes:
 * gst-nvinferserver inferencing as Triton CAPI client(only for x86)
 * gst-nvinferserver inferencing as Triton gRPC client(only for x86)
 
-The following steps are only needed for the LPR sample application working with gst-nvinferserver inferencing on x86 platforms. For LPR sample application works with nvinfer mode, please go to [Build and Run](#build-and-run) part directly.
+The following instructions are only needed for the LPR sample application working with gst-nvinferserver inferencing on x86 platformsi as the Triton client. For LPR sample application works with nvinfer mode, please go to [Build and Run](#build-and-run) part directly.
 
-1. Start Triton Server with DeepStream Triton container, the docker should be run in a new terminal and the following commands should be run in the same path as the deepstream_lpr_app codes are downloaded:
-* For LPR sample application works as Triton CAPI client
-```
-    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/deepstream_lpr_app:/lpr   -e DISPLAY=$DISPLAY -w /lpr nvcr.io/nvidia/deepstream:6.1-triton
-```
-* For LPR sample application works as Triton gRPC client
-```
-    //start Triton docker, 10001:8001 is used to map docker container's 8000 port to host's 10000 port, these ports can be changed.
-    docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -p 10000:8000 -p 10001:8001 -p 10002:8002  -v $(pwd)/deepstream_lpr_app:/lpr   -e DISPLAY=$DISPLAY -w /lpr nvcr.io/nvidia/deepstream:6.1-triton
+For setting up Triton Inference Server for native cAPI inferencing, please refer to triton_server.md.
 
-    //start tritonserver
-    tritonserver --model-repository=/lpr/triton_models --strict-model-config=false --grpc-infer-allocation-pool-size=16 --log-verbose=1
+For setting up Triton Inference Server for gRPC inferencing, please refer to triton_server_server_grpc.md.
 
-    //correct Triton gRPC url, open files in deepstream-lpr-app/triton-grpc, fill the actual grpc url, like this:
-    grpc {
-        url: "10.23.xx.xx:10001"
-    }
-```
-
-2. After the docker start to run, the following steps are needed to generate model engines inside docker:
-```
-    //For US car plate recognition
-    ./prepare_triton_us.sh
-
-    //For Chinese car plate recognition
-    ./prepare_triton_ch.sh
-```
+The Triton Inference Server libraries are required to be installed if the DeepStream LPR sample application should work as the Triton client, the Triton client [document](https://github.com/triton-inference-server/client) instructs how to install the necessary libraries. A easier way is to run DeepStream application in the [DeepStream Trton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream). 
 
 ## Build and Run
-The following steps should run in host machine if the LPR sample application works as Triton client.
 ```
     make
     cd deepstream-lpr-app
@@ -168,7 +145,7 @@ Or run with YAML config file after modify triton part in yml file.
 
 A sample of Chinese car plate recognition:
 ```
-    ./deepstream-lpr-app 2 2 0 triton us_car_test2.mp4 us_car_test2.mp4 output.264
+    ./deepstream-lpr-app 2 2 0 triton ch_car_test2.mp4 ch_car_test2.mp4 output.264
 ```
 
 Or run with YAML config file after modify triton part in yml file.
@@ -190,7 +167,7 @@ Or run with YAML config file after modify triton part in yml file.
 
 A sample of Chinese car plate recognition:
 ```
-    ./deepstream-lpr-app 2 2 0 tritongrpc us_car_test2.mp4 us_car_test2.mp4 output.264
+    ./deepstream-lpr-app 2 2 0 tritongrpc ch_car_test2.mp4 ch_car_test2.mp4 output.264
 ```
 
 Or run with YAML config file after modify triton part in yml file.

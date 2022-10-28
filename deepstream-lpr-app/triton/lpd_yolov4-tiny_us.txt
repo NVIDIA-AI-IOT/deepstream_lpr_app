@@ -29,7 +29,7 @@ infer_config {
       model_name: "us_lpd_yolov4-tiny"
       version: -1
       model_repo {
-        root: "../../triton_models"
+        root: "../../triton_models/us"
         strict_model_config: true
       }
     }
@@ -52,7 +52,7 @@ infer_config {
     path : "/opt/nvidia/deepstream/deepstream-6.1/lib/libnvds_infercustomparser.so"
   }
   postprocess {
-    labelfile_path: "../../triton_models/ch_lpd_yolov4-tiny/usa_lpd_label.txt"
+    labelfile_path: "../../triton_models/us/us_lpd_yolov4-tiny/usa_lpd_label.txt"
     detection {
       num_detected_classes: 4
       per_class_params {

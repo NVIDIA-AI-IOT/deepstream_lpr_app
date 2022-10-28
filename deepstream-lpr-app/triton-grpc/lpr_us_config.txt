@@ -30,7 +30,7 @@ infer_config {
       model_name: "us_lprnet"
       version: -1
       grpc {
-        url: "127.0.0.1:8001"
+        url: "127.0.0.1:10001"
       }
     }
   }

@@ -29,7 +29,7 @@ infer_config {
       model_name: "ch_lpd_yolov4-tiny"
       version: -1
       model_repo {
-        root: "../../triton_models"
+        root: "../../triton_models/ch"
         strict_model_config: true
       }
     }

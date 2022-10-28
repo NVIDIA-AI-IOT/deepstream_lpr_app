@@ -38,7 +38,7 @@ infer_config {
       model_name: "trafficcamnet"
       version: -1
       model_repo {
-        root: "../../triton_models"
+        root: "../../triton_models/us"
         strict_model_config: true
       }
     }

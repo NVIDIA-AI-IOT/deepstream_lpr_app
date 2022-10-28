@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2022 NVIDIA Corporation.  All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,54 +20,35 @@
 # DEALINGS IN THE SOFTWARE.
 ################################################################################
 
-infer_config {
-  unique_id: 3
-  gpu_ids: 0
-  max_batch_size: 16
-  backend {
-
-    triton {
-      model_name: "us_lprnet"
-      version: -1
-      model_repo {
-        root: "../../triton_models/us"
-        strict_model_config: true
-      }
-    }
+name: "trafficcamnet"
+platform: "tensorrt_plan"
+max_batch_size: 1
+default_model_filename: "resnet18_trafficcamnet_pruned.etlt_b1_gpu0_int8.engine"
+input [
+  {
+    name: "input_1"
+    data_type: TYPE_FP32
+    format: FORMAT_NCHW
+    dims: [3, 544, 960]
   }
+]
+output [
+  {
+    name: "output_bbox/BiasAdd"
+    data_type: TYPE_FP32
+    dims: [16, 34, 60]
+  },
 
-  preprocess {
-    network_format: IMAGE_FORMAT_RGB
-    tensor_order: TENSOR_ORDER_NONE
-    #maintain_aspect_ratio: 0
-    #frame_scaling_hw: FRAME_SCALING_HW_DEFAULT
-    #frame_scaling_filter: 1
-    normalize {
-      scale_factor: 0.00392156862745098
-      #channel_offsets: [0, 0, 0]
-      #channel_offsets: [128, 128, 128]
-    }
+  {
+    name: "output_cov/Sigmoid"
+    data_type: TYPE_FP32
+    dims: [4, 34, 60]
   }
-
-  postprocess {
-     classification {
-      threshold:0.5
-      custom_parse_classifier_func: "NvDsInferParseCustomNVPlate"
-    }
+]
+instance_group [
+  {
+    kind: KIND_GPU
+    count: 1
+    gpus: 0
   }
-  custom_lib {
-    path: "../../nvinfer_custom_lpr_parser/libnvdsinfer_custom_impl_lpr.so"
-  }
-}
-
-input_control {
-  process_mode: PROCESS_MODE_CLIP_OBJECTS
-  operate_on_gie_id: 2
-  operate_on_class_ids: [0]
-  interval: 0
-  async_mode: false
-}
-
-output_control {
-  output_tensor_meta: false
-}
+]

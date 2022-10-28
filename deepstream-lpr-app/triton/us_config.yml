@@ -1,5 +1,5 @@
 config:
-  pgie: pgie_config.txt
+  pgie: pgie_config_us.txt
   lpd: lpd_yolov4-tiny_us.txt
   lpr: lpr_us_config.txt
 
