@@ -80,9 +80,9 @@ From DeepStream 6.1, LPR sample application supports three inferencing modes:
 
 The following instructions are only needed for the LPR sample application working with gst-nvinferserver inferencing on x86 platformsi as the Triton client. For LPR sample application works with nvinfer mode, please go to [Build and Run](#build-and-run) part directly.
 
-For setting up Triton Inference Server for native cAPI inferencing, please refer to triton_server.md.
+For setting up Triton Inference Server for native cAPI inferencing, please refer to [triton_server.md](https://github.com/NVIDIA-AI-IOT/deepstream_lpr_app/blob/master/triton_server.md).
 
-For setting up Triton Inference Server for gRPC inferencing, please refer to triton_server_server_grpc.md.
+For setting up Triton Inference Server for gRPC inferencing, please refer to [triton_server_grpc.md](https://github.com/NVIDIA-AI-IOT/deepstream_lpr_app/blob/master/triton_server_grpc.md).
 
 The Triton Inference Server libraries are required to be installed if the DeepStream LPR sample application should work as the Triton client, the Triton client [document](https://github.com/triton-inference-server/client) instructs how to install the necessary libraries. A easier way is to run DeepStream application in the [DeepStream Trton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream). 
 

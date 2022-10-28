@@ -1,5 +1,5 @@
 ## Prepare Triton Server For Native Inferencing
-As mentioned in the README, the DeepStream LPR sample application should work with Triton Server running natively. So the [Triton Inference Server libraries](https://github.com/triton-inference-server/client) should be installed in the machine. A easier way is to run the LPR sample application in the [DeepStream Triton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream). 
+As mentioned in the README, the DeepStream LPR sample application should work as Triton client with Triton Server running natively for cAPIs. So the [Triton Inference Server libraries](https://github.com/triton-inference-server/client) should be installed in the machine. A easier way is to run the LPR sample application in the [DeepStream Triton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream). 
 
 Run DeepStream Triton container, take DeepStream 6.1 GA container as the example:
 ```
