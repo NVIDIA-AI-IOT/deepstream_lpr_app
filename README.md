@@ -109,7 +109,7 @@ The following steps are only needed for the LPR sample application working with 
 ```
 
 ## Build and Run
-For the The following steps should run in host machine if the LPR sample application works as Triton client.
+The following steps should run in host machine if the LPR sample application works as Triton client.
 ```
     make
     cd deepstream-lpr-app
