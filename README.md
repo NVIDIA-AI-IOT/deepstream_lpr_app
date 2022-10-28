@@ -84,7 +84,7 @@ The following instructions are only needed for the LPR sample application workin
 
 * For setting up Triton Inference Server for gRPC inferencing, please refer to [triton_server_grpc.md](https://github.com/NVIDIA-AI-IOT/deepstream_lpr_app/blob/master/triton_server_grpc.md).
 
-The Triton Inference Server libraries are required to be installed if the DeepStream LPR sample application should work as the Triton client, the Triton client [document](https://github.com/triton-inference-server/client) instructs how to install the necessary libraries. A easier way is to run DeepStream application in the [DeepStream Trton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream). 
+The Triton Inference Server libraries are required to be installed if the DeepStream LPR sample application should work as the Triton client, the Triton client [document](https://github.com/triton-inference-server/client) instructs how to install the necessary libraries. A easier way is to run DeepStream application in the [DeepStream Triton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream). 
 
 ## Build and Run
 ```
