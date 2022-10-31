@@ -3,6 +3,7 @@
  - [Performance](#performance)
  - [Prerequisition](#prerequisition)
  - [Download](#download)
+ - [Prepare Triton Server](#prepare-triton-server)
  - [Build and Run](#build-and-run)
  - [Notice](#notice)
 
