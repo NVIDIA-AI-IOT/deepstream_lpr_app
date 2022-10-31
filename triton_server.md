@@ -5,7 +5,7 @@ Running DeepStream Triton container, takes the DeepStream 6.1 GA container as th
 ```
     docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/deepstream_lpr_app:/lpr   -e DISPLAY=$DISPLAY -w /lpr nvcr.io/nvidia/deepstream:6.1-triton
 ```
-Inside the container, prepare model engines for Triton server:
+Inside the container, prepare model engines for Triton server, the [tao-converter links](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/resources/tao-converter) inside the prepare_triton_us.sh or prepare_triton_ch.sh scripts can be changed to proper versions according to the actual TensorRT version:
 ```
     //For US car plate recognition
     ./prepare_triton_us.sh
