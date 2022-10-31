@@ -3,14 +3,14 @@
 
 DeepStream applications can work as Triton Inference client. So the corresponding Triton Inference Server should be started before the Triton client start to work.
 
-A immediate way to start a corresponding Triton Server is to use Triton containers provided in [NGC](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/tritonserver). Since every DeepStream version has it corresponding Triton Server version, so a reliable way is to use the [DeepStream Triton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream).
+An immediate way to start a corresponding Triton Server is to use Triton containers provided in [NGC](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/tritonserver). Since every DeepStream version has its corresponding Triton Server version, so the reliable way is to use the [DeepStream Triton container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream).
 
 * The Triton Server can be started in the same machine which the DeepStream application works in, please make sure the Triton Server is started in a new terminal.
 
-* The Triton Server can be started in another machine as the server, the necessary scripts and configuration files are provided in the LPR sample repository, so the project should be downloaded in the server machine as mentioned in the README "Download" part. 
+* The Triton Server can be started in another machine as the server, the necessary scripts and configuration files are provided in the LPR sample repository, so the LPR project should be downloaded in the server machine as mentioned in the README "Download" part. 
 
 ## Prepare Triton Server For gRPC Connection
-The following steps take the DeepStream 6.1 GA as an example, if you use other DeepStream versions, the corresponding DeepStream Triton [image](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/tritonserver) can be used.
+The following steps take the DeepStream 6.1 GA as an example, if you use other DeepStream versions, the corresponding DeepStream Triton [image](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream) can be used.
 
 To start Triton Server with DeepStream Triton container, the docker should be run in a new terminal and the following commands should be run in the same path as the deepstream_lpr_app codes are downloaded:
 * For LPR sample application works as Triton gRPC client
