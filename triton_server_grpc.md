@@ -41,7 +41,7 @@ Please set the gRPC url as the IP address of the server machine in the following
 The gRPC url setting looks like:
 ```
 grpc {
-        url: "10.23.xx.xx:10001"
+        url: "10.23.89.105:10001"
     }
 ```
 
@@ -54,4 +54,10 @@ Then the Triton Server service can be started with the following command:
     tritonserver --model-repository=/lpr/triton_models/ch --strict-model-config=false --grpc-infer-allocation-pool-size=16 --log-verbose=1
 ```
 
-The LPR sample application should run in another terminal with Triton Inference client libraries installed. It is recommend to run the application in the DeepStream Triton container, please refer to [triton_server.md](https://github.com/NVIDIA-AI-IOT/deepstream_lpr_app/blob/master/triton_server.md) for how to start a DeepStream Triton container.
+The LPR sample application should run in the enviroment with Triton Inference client libraries installed. It is recommend to run the application in the DeepStream Triton container, the following command will help you to start a DeepStream Triton container as the container for Triton client.
+
+``docker run --gpus all -it  --ipc=host --rm -v /tmp/.X11-unix:/tmp/.X11-unix  -v $(pwd)/deepstream_lpr_app:/lpr   -e DISPLAY=$DISPLAY -w /lpr nvcr.io/nvidia/deepstream:6.1-triton``
+
+Inside the Triton client container, the LPR sample application can run as the Triton client. Plesae refer to the [README](https://github.com/NVIDIA-AI-IOT/deepstream_lpr_app#samples) for sample command.
+
+
