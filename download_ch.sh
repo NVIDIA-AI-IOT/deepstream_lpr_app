@@ -20,6 +20,7 @@ mkdir -p ./models/tao_pretrained_models/yolov4-tiny
 cd ./models/tao_pretrained_models/yolov4-tiny
 wget 'https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v2.1/files/yolov4_tiny_ccpd_deployable.etlt'
 wget 'https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v2.1/files/yolov4_tiny_ccpd_cal.bin'
+wget 'https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v2.1/files/usa_lpd_label.txt'
 cd -
 
 # Download LPR model
