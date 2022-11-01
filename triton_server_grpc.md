@@ -29,7 +29,7 @@ Then the model engines should be generated in the server, the [tao-converter lin
     ./prepare_triton_ch.sh
 ```
 
-If the server is running in the same machine as the DeepStream application, the following command can be used directly. If it is not, please set the gRPC url as the IP address of the server machine in the following configuration files in deepstream-lpr-app/triton-grpc folder:
+Please set the gRPC url as the IP address of the server machine in the following configuration files in deepstream-lpr-app/triton-grpc folder:
 * lpr_ch_config.txt
 * pgie_config.txt
 * lpd_DetectNet2_us.txt
