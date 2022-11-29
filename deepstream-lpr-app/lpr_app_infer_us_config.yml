@@ -1,5 +1,5 @@
 source-list:
-  list: /home/cars/cn.mp4
+  list: /home/hungtrieu07/Downloads/vehicle_vietnam/test_6.mp4  # Path to video file
 
 #If there is ROI
 analytics-config:
@@ -20,7 +20,7 @@ output:
   enc: 0
   bitrate: 4000000
   ##The file name without suffix
-  filename: test
+  filename: test_6
 
 primary-gie:
   ##For car detection
