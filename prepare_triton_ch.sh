@@ -6,9 +6,9 @@ else
     echo " download tao-converter from https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/resources/tao-converter/version"
 	TARGET_DEVICE=$(uname -m)
 	if [ "${TARGET_DEVICE}" = "x86_64" ]; then
-		wget --content-disposition 'https://api.ngc.nvidia.com/v2/resources/nvidia/tao/tao-converter/versions/v3.21.11_trt8.0_x86/files/tao-converter'
+		wget --content-disposition 'https://api.ngc.nvidia.com/v2/resources/nvidia/tao/tao-converter/versions/v3.22.05_trt8.4_x86/files/tao-converter'
 	else
-		wget --content-disposition 'https://api.ngc.nvidia.com/v2/resources/nvidia/tao/tao-converter/versions/v3.21.11_trt8.0_aarch64/files/tao-converter'
+		wget --content-disposition 'https://api.ngc.nvidia.com/v2/resources/nvidia/tao/tao-converter/versions/v3.22.05_trt8.4_aarch64/files/tao-converter'
 	fi
 fi
 

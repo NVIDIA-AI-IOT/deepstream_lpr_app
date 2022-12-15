@@ -53,6 +53,7 @@ infer_config {
   }
 
   postprocess {
+    labelfile_path: "../../triton_models/ch/ch_lpd_yolov4-tiny/usa_lpd_label.txt"
     detection {
       num_detected_classes: 4
       custom_parse_bbox_func:"NvDsInferParseCustomBatchedNMSTLT"
