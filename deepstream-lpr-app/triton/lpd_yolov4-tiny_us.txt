@@ -49,7 +49,7 @@ infer_config {
   }
 
   custom_lib {
-    path : "/opt/nvidia/deepstream/deepstream/lib/libnvds_infercustomparser.so"
+    path: "/opt/nvidia/deepstream/deepstream/lib/libnvds_infercustomparser.so"
   }
   postprocess {
     labelfile_path: "../../triton_models/us/us_lpd_yolov4-tiny/usa_lpd_label.txt"
@@ -60,11 +60,11 @@ infer_config {
         value { pre_threshold: 0.4 }
       }
       nms {
-        confidence_threshold:0.2
-        topk:20
-        iou_threshold:0.5
+        confidence_threshold: 0.2
+        topk: 20
+        iou_threshold: 0.5
       }
-      custom_parse_bbox_func:"NvDsInferParseCustomBatchedNMSTLT"
+      custom_parse_bbox_func: "NvDsInferParseCustomBatchedNMSTLT"
     }
   }
 }

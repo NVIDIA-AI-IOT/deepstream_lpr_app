@@ -57,7 +57,7 @@ batch-size=16
 network-mode=2
 num-detected-classes=3
 gie-unique-id=3
-output-blob-names=output_bbox/BiasAdd;output_cov/Sigmoid
+output-blob-names=tf_op_layer_ArgMax;tf_op_layer_Max
 #0=Detection 1=Classifier 2=Segmentation
 network-type=1
 parse-classifier-func-name=NvDsInferParseCustomNVPlate
