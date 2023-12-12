@@ -51,10 +51,9 @@ gpu-id=0
 net-scale-factor=0.0039215697906911373
 model-color-format=0
 labelfile-path=../models/LP/LPD/usa_lpd_label.txt
-tlt-encoded-model=../models/LP/LPD/usa_pruned.etlt
-tlt-model-key=nvidia_tlt
-model-engine-file=../models/LP/LPD/usa_pruned.etlt_b16_gpu0_int8.engine
-int8-calib-file=../models/LP/LPD/usa_lpd_cal.bin
+model-engine-file=../models/LP/LPD/LPDNet_usa_pruned_tao5.onnx_b16_gpu0_int8.engine
+int8-calib-file=../models/LP/LPD/usa_cal_8.6.1.bin
+onnx-file=../models/LP/LPD/LPDNet_usa_pruned_tao5.onnx
 uff-input-dims=3;480;640;0
 uff-input-blob-name=input_1
 batch-size=16
@@ -71,7 +70,7 @@ operate-on-gie-id=1
 operate-on-class-ids=0
 #no cluster
 cluster-mode=3
-output-blob-names=output_cov/Sigmoid;output_bbox/BiasAdd
+output-blob-names=output_cov/Sigmoid:0;output_bbox/BiasAdd:0
 input-object-min-height=30
 input-object-min-width=40
 #GPU:1  VIC:2(Jetson only)

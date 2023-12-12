@@ -20,13 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include "ds_yml_parse.h"
-
 #include <yaml-cpp/yaml.h>
 #include <string>
 #include <cstring>
 #include <iostream>
 #include <unordered_map>
+#include "ds_yml_parse.h"
 
 NvDsYamlParserStatus
 ds_parse_rtsp_output(GstElement * sink,
@@ -35,7 +34,7 @@ ds_parse_rtsp_output(GstElement * sink,
 {
   std::string paramKey = "";
 
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
 
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
@@ -44,7 +43,7 @@ ds_parse_rtsp_output(GstElement * sink,
 
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
 
       YAML::const_iterator itr = docs[i].begin();
       std::string group_name = itr->first.as<std::string>();
@@ -110,7 +109,7 @@ ds_parse_enc_config(GstElement *encoder,
 {
   std::string paramKey = "";
 
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
 
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
@@ -119,7 +118,7 @@ ds_parse_enc_config(GstElement *encoder,
 
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
 
       YAML::const_iterator itr = docs[i].begin();
       std::string group_name = itr->first.as<std::string>();
@@ -179,7 +178,7 @@ ds_parse_videotemplate_config(GstElement *vtemplate,
 {
   std::string paramKey = "";
 
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
 
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
@@ -188,7 +187,7 @@ ds_parse_videotemplate_config(GstElement *vtemplate,
 
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
 
       YAML::const_iterator itr = docs[i].begin();
       std::string group_name = itr->first.as<std::string>();
@@ -244,7 +243,7 @@ ds_parse_group_type(gchar *cfg_file_path, const char* group)
 {
   std::string paramKey = "";
 
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
 
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
@@ -254,7 +253,7 @@ ds_parse_group_type(gchar *cfg_file_path, const char* group)
 
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
 
       if (docs[i][group]["type"]) {
           val= docs[i][group]["type"].as<guint>();
@@ -270,7 +269,7 @@ ds_parse_enc_type(gchar *cfg_file_path, const char* group)
 {
   std::string paramKey = "";
 
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
 
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
@@ -280,7 +279,7 @@ ds_parse_enc_type(gchar *cfg_file_path, const char* group)
 
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
 
       if (docs[i][group]["enc"]) {
           val= docs[i][group]["enc"].as<guint>();
@@ -296,7 +295,7 @@ ds_parse_file_name(gchar *cfg_file_path, const char* group)
 {
   std::string paramKey = "";
 
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
 
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
@@ -305,7 +304,7 @@ ds_parse_file_name(gchar *cfg_file_path, const char* group)
   GString *str = NULL;
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
       if (docs[i][group]["filename"]) {
           std::string temp = docs[i][group]["filename"].as<std::string>();
           str = g_string_new(temp.c_str());
@@ -321,14 +320,14 @@ ds_parse_config_yml_filepath(gchar *cfg_file_path, const char* group)
 {
   std::string paramKey = "";
 
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
 
   int total_docs = docs.size();
   GString *str = NULL;
 
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
       if (docs[i][group]["config-file-path"]) {
           std::string temp = docs[i][group]["config-file-path"].as<std::string>();
           str = g_string_new(temp.c_str());
@@ -343,14 +342,14 @@ guint
 ds_parse_group_enable(gchar *cfg_file_path, const char* group)
 {
   std::string paramKey = "";
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
   int total_docs = docs.size();
   guint val = 0;
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
       if (docs[i][group]["enable"]) {
           val= docs[i][group]["enable"].as<guint>();
           return val;
@@ -363,14 +362,14 @@ guint
 ds_parse_group_car_mode(gchar *cfg_file_path, const char* group)
 {
   std::string paramKey = "";
-  auto docs = YAML::LoadAllFromFile(cfg_file_path);
+  std::vector<YAML::Node> docs = YAML::LoadAllFromFile(cfg_file_path);
   std::vector<int> docs_indx_vec;
   std::unordered_map<std::string, int> docs_indx_umap;
   int total_docs = docs.size();
   guint val = 0;
   for (int i =0; i < total_docs;i++)
   {
-    if (docs[i][group] != NULL) {
+    if (!docs[i][group].IsNull()) {
       if (docs[i][group]["car-mode"]) {
           val= docs[i][group]["car-mode"].as<guint>();
           return val;

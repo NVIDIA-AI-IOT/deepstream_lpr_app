@@ -44,8 +44,13 @@ is-classifier=0
 #network-type=0
 cluster-mode=3
 output-blob-names=BatchedNMS
+#if scaling-compute-hw = VIC, input-object-min-height need to be even and greater than or equal to (model height)/16
+input-object-min-height=30
+#if scaling-compute-hw = VIC, input-object-min-width need to be even and greater than or equal to( model width)/16
+input-object-min-width=40
 parse-bbox-func-name=NvDsInferParseCustomBatchedNMSTLT
 custom-lib-path=/opt/nvidia/deepstream/deepstream/lib/libnvds_infercustomparser.so
+layer-device-precision=cls/mul:fp32:gpu;box/mul_6:fp32:gpu;box/add:fp32:gpu;box/mul_4:fp32:gpu;box/add_1:fp32:gpu;cls/Reshape_reshape:fp32:gpu;box/Reshape_reshape:fp32:gpu;encoded_detections:fp32:gpu;bg_leaky_conv1024_lrelu:fp32:gpu;sm_bbox_processor/concat_concat:fp32:gpu;sm_bbox_processor/sub:fp32:gpu;sm_bbox_processor/Exp:fp32:gpu;yolo_conv1_4_lrelu:fp32:gpu;yolo_conv1_3_1_lrelu:fp32:gpu;md_leaky_conv512_lrelu:fp32:gpu;sm_bbox_processor/Reshape_reshape:fp32:gpu;conv_sm_object:fp32:gpu;yolo_conv5_1_lrelu:fp32:gpu;concatenate_6:fp32:gpu;yolo_conv3_1_lrelu:fp32:gpu;concatenate_5:fp32:gpu;yolo_neck_1_lrelu:fp32:gpu
 
 [class-attrs-all]
 pre-cluster-threshold=0.3

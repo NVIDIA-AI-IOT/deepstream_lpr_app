@@ -37,7 +37,7 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 
 ## Prerequisition
 
-* [DeepStream SDK 6.0 or above](https://developer.nvidia.com/deepstream-getting-started)
+* [DeepStream SDK 6.4 or above](https://developer.nvidia.com/deepstream-getting-started)
 
   Make sure deepstream-test1 sample can run successful to verify your DeepStream installation
 

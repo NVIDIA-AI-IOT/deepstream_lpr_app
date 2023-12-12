@@ -73,7 +73,7 @@ input_control {
   process_mode: PROCESS_MODE_CLIP_OBJECTS
   operate_on_gie_id: 1
   operate_on_class_ids: [0]
-  interval: 0
+  secondary_reinfer_interval: 0
   async_mode: false
   object_control {
     bbox_filter {

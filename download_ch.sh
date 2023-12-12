@@ -10,8 +10,9 @@ cd -
 # Download LPD model
 mkdir -p ./models/LP/LPD
 cd ./models/LP/LPD
-wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v1.0/files/ccpd_pruned.etlt
-wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v1.0/files/ccpd_cal.bin
+wget --content-disposition 'https://api.ngc.nvidia.com/v2/models/org/nvidia/team/tao/lpdnet/pruned_v2.2/files?redirect=true&path=LPDNet_CCPD_pruned_tao5.onnx' -O LPDNet_CCPD_pruned_tao5.onnx
+wget --content-disposition 'https://api.ngc.nvidia.com/v2/models/org/nvidia/team/tao/lpdnet/pruned_v2.2/files?redirect=true&path=ccpd_cal_8.6.1.bin' -O ccpd_cal_8.6.1.bin
+
 wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/lpdnet/versions/pruned_v1.0/files/ccpd_label.txt
 cd -
 

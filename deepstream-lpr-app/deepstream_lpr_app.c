@@ -202,20 +202,20 @@ osd_sink_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
       for (l_class = obj_meta->classifier_meta_list; l_class != NULL;
            l_class = l_class->next) {
         class_meta = (NvDsClassifierMeta *)(l_class->data);
-	if (!class_meta)
+        if (!class_meta)
           continue;
         if (class_meta->unique_component_id == SECONDARY_CLASSIFIER_UID) {
           for ( label_i = 0, l_label = class_meta->label_info_list;
             label_i < class_meta->num_labels && l_label; label_i++,
             l_label = l_label->next) {
-	    label_info = (NvDsLabelInfo *)(l_label->data);
-	    if (label_info) {
-	      if (label_info->label_id == 0 && label_info->result_class_id == 1) {
-	        g_print ("Plate License %s\n",label_info->result_label);
-	      }
-	    }
-	  }
-	}
+              label_info = (NvDsLabelInfo *)(l_label->data);
+              if (label_info) {
+                if (label_info->label_id == 0 && label_info->result_class_id == 1) {
+                  g_print ("Plate License %s\n",label_info->result_label);
+                }
+              }
+          }
+        }
       }
     }
 
@@ -254,8 +254,7 @@ osd_sink_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
 
   g_print ("Frame Number = %d Vehicle Count = %d Person Count = %d"
            " License Plate Count = %d\n",
-           frame_number, vehicle_count, person_count,
-           lp_count);
+           frame_number, vehicle_count, person_count, lp_count);
   frame_number++;
   total_plate_number += lp_count;
   return GST_PAD_PROBE_OK;
@@ -430,8 +429,8 @@ main (int argc, char *argv[])
   GstElement *pipeline = NULL,*streammux = NULL, *sink = NULL, 
              *primary_detector = NULL, *secondary_detector = NULL,
              *nvvidconv = NULL, *nvosd = NULL, *nvvidconv1 = NULL,
-             *nvh264enc = NULL, *capfilt = NULL,
-             *secondary_classifier = NULL, *nvtile=NULL;
+             *nvenc = NULL, *capfilt = NULL, *mux = NULL,
+             *secondary_classifier = NULL, *nvtile=NULL, *encparse = NULL;
   GstElement *tracker = NULL, *nvdsanalytics = NULL;
   GstElement *queue1 = NULL, *queue2 = NULL, *queue3 = NULL, *queue4 = NULL,
              *queue5 = NULL, *queue6 = NULL, *queue7 = NULL, *queue8 = NULL,
@@ -638,9 +637,9 @@ main (int argc, char *argv[])
   }
 
   if (isH264)
-      nvh264enc = gst_element_factory_make ("nvv4l2h264enc" ,"nvvideo-h264enc");
+      nvenc = gst_element_factory_make ("nvv4l2h264enc" ,"nvvideo-h264enc");
   else
-      nvh264enc = gst_element_factory_make ("nvv4l2h265enc" ,"nvvideo-h265enc");
+      nvenc = gst_element_factory_make ("nvv4l2h265enc" ,"nvvideo-h265enc");
 
   capfilt = gst_element_factory_make ("capsfilter", "nvvideo-caps");
 
@@ -685,7 +684,7 @@ main (int argc, char *argv[])
   }
 
   if (!primary_detector || !secondary_detector || !nvvidconv
-      || !nvosd || !sink  || !capfilt || !nvh264enc) {
+      || !nvosd || !sink  || !capfilt || !nvenc) {
     g_printerr ("One element could not be created. Exiting.\n");
     return -1;
   }
@@ -805,27 +804,30 @@ main (int argc, char *argv[])
 
   if (output_type == 1) {
     gchar *filepath = NULL;
+    mux = gst_element_factory_make ("qtmux", "mp4-mux");
+    if(isH264) {
+      encparse = gst_element_factory_make ("h264parse", "h264-encparser");
+    } else {
+      encparse = gst_element_factory_make ("h265parse", "h265-encparser");
+    }
     if (isYAML) {
         GString * output_file =
           ds_parse_file_name(argv[1], "output");
-        if (isH264)
-            filepath = g_strconcat(output_file->str,".264",NULL);
-        else
-            filepath = g_strconcat(output_file->str,".265",NULL);
-        ds_parse_enc_config(nvh264enc, argv[1], "output");
+        filepath = g_strconcat(output_file->str,".mp4",NULL);
+        ds_parse_enc_config(nvenc, argv[1], "output");
     } else {
-        filepath = g_strconcat(argv[argc-1],".264",NULL);
+        filepath = g_strconcat(argv[argc-1],".mp4",NULL);
     }
     if(use_nvinfer_server){
         g_object_set (G_OBJECT (sink), "async", FALSE, NULL);
         g_object_set (G_OBJECT (sink), "sync", TRUE, NULL);
     }
     g_object_set (G_OBJECT (sink), "location", filepath, NULL);
-    gst_bin_add_many (GST_BIN (pipeline), nvvidconv1, nvh264enc, capfilt, 
+    gst_bin_add_many (GST_BIN (pipeline), nvvidconv1, nvenc, encparse, mux, capfilt, 
         queue9, queue10, NULL);
 
     if (!gst_element_link_many (nvosd, queue9, nvvidconv1, capfilt, queue10,
-           nvh264enc, sink, NULL)) {
+           nvenc, encparse, mux, sink, NULL)) {
       g_printerr ("OSD and sink elements link failure.\n");
       return -1;
     }

@@ -29,7 +29,7 @@ infer_config {
       model_name: "CH_LPD"
       version: -1
       model_repo {
-        root: "../../triton_models"
+        root: "../../triton_models/ch"
         strict_model_config: true
       }
     }
@@ -49,7 +49,7 @@ infer_config {
   }
 
   postprocess {
-    labelfile_path: "../../triton_models/CH_LPD/ccpd_label.txt"
+    labelfile_path: "../../triton_models/ch/CH_LPD/ccpd_label.txt"
     detection {
       num_detected_classes: 4
       per_class_params {
@@ -69,7 +69,7 @@ input_control {
   process_mode: PROCESS_MODE_CLIP_OBJECTS
   operate_on_gie_id: 1
   operate_on_class_ids: [0]
-  interval: 0
+  secondary_reinfer_interval: 0
   async_mode: false
   object_control {
     bbox_filter {
