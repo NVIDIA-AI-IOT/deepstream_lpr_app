@@ -28,8 +28,8 @@ primary-gie:
   unique-id: 1
 
 secondary-gie-0:
-  ##For US car plate
-  #config-file-path: lpd_us_yolov4-tiny_config.yml
+  ##For lpd_yolov4-tiny
+  #config-file-path: lpd_yolov4-tiny_ch.yml
   ##For China mainland car plate
   config-file-path: lpd_yolov4-tiny_ch.yml
   unique-id: 2

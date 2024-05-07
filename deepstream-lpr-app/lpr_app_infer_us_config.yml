@@ -28,18 +28,16 @@ primary-gie:
   unique-id: 1
 
 secondary-gie-0:
-  ##For US car plate
+  ##For lpd_yolov4
   config-file-path: lpd_yolov4-tiny_us.yml
-  ##For China mainland car plate
-  #config-file-path: lpd_ccpd_yolov4-tiny_config.yml
+  ##For lpd_DetectNet2
+  #config-file-path: lpd_DetectNet2_us.yml
   unique-id: 2
   process-mode: 2
 
 secondary-gie-1:
   ##For US car plate recognization
   config-file-path: lpr_config_sgie_us.yml
-  ##For China mainland car plate recognization
-  #config-file-path: lpr_config_sgie_ch.yml
   unique-id: 3
   process-mode: 2
 

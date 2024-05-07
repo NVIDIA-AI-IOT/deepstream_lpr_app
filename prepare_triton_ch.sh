@@ -19,11 +19,11 @@ echo "need to download_ch.sh first"
 
 echo "prepare trafficcamnet"
 mkdir -p triton_models/ch/trafficcamnet/1/
-./tao-converter -k tlt_encode -t int8 -c models/tao_pretrained_models/trafficcamnet/trafficnet_int8.txt -e triton_models/ch/trafficcamnet/1/resnet18_trafficcamnet_pruned.etlt_b1_gpu0_int8.engine -b 1 -d 3,544,960 models/tao_pretrained_models/trafficcamnet/resnet18_trafficcamnet_pruned.etlt
+./tao-converter -k tlt_encode -t int8 -c models/tao_pretrained_models/trafficcamnet/trafficcamnet_int8.txt -e triton_models/ch/trafficcamnet/1/resnet18_trafficcamnet_pruned.etlt_b1_gpu0_int8.engine -b 1 -d 3,544,960 models/tao_pretrained_models/trafficcamnet/resnet18_trafficcamnet_pruned.etlt
 
 echo "prepare CH_LPD"
 mkdir -p triton_models/ch/CH_LPD/1/
-trtexec --onnx=models/LP/LPD/LPDNet_CCPD_pruned_tao5.onnx --int8 --calib=models/LP/LPD/usa_cal_8.6.1.bin \
+trtexec --onnx=models/LP/LPD/LPDNet_CCPD_pruned_tao5.onnx --int8 --calib=models/LP/LPD/ccpd_cal_8.6.1.bin \
  --saveEngine=triton_models/ch/CH_LPD/1/LPDNet_CCPD_pruned_tao5.onnx_b16_gpu0_int8.engine --minShapes="input_1:0":1x3x1168x720 \
  --optShapes="input_1:0":16x3x1168x720 --maxShapes="input_1:0":16x3x1168x720
 cp models/LP/LPD/ccpd_label.txt triton_models/ch/CH_LPD/

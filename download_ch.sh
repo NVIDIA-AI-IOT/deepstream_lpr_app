@@ -3,8 +3,8 @@
 # Download CAR model
 mkdir -p ./models/tao_pretrained_models/trafficcamnet
 cd ./models/tao_pretrained_models/trafficcamnet
-wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/trafficcamnet/versions/pruned_v1.0/files/trafficnet_int8.txt
-wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/trafficcamnet/versions/pruned_v1.0/files/resnet18_trafficcamnet_pruned.etlt
+wget --content-disposition 'https://api.ngc.nvidia.com/v2/models/org/nvidia/team/tao/trafficcamnet/pruned_v1.0.3/files?redirect=true&path=resnet18_trafficcamnet_pruned.etlt' -O resnet18_trafficcamnet_pruned.etlt
+wget --content-disposition 'https://api.ngc.nvidia.com/v2/models/org/nvidia/team/tao/trafficcamnet/pruned_v1.0.3/files?redirect=true&path=trafficcamnet_int8.txt' -O trafficcamnet_int8.txt
 cd -
 
 # Download LPD model

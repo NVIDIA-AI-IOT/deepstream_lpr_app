@@ -19,7 +19,7 @@ echo "need to download_us.sh first"
 
 echo "prepare trafficcamnet"
 mkdir -p triton_models/us/trafficcamnet/1/
-./tao-converter -k tlt_encode -t int8 -c models/tao_pretrained_models/trafficcamnet/trafficnet_int8.txt -e triton_models/us/trafficcamnet/1/resnet18_trafficcamnet_pruned.etlt_b1_gpu0_int8.engine -b 1 -d 3,544,960 models/tao_pretrained_models/trafficcamnet/resnet18_trafficcamnet_pruned.etlt
+./tao-converter -k tlt_encode -t int8 -c models/tao_pretrained_models/trafficcamnet/trafficcamnet_int8.txt -e triton_models/us/trafficcamnet/1/resnet18_trafficcamnet_pruned.etlt_b1_gpu0_int8.engine -b 1 -d 3,544,960 models/tao_pretrained_models/trafficcamnet/resnet18_trafficcamnet_pruned.etlt
 
 echo "prepare US_LPD"
 mkdir -p triton_models/us/US_LPD/1/
