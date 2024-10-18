@@ -1,3 +1,10 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+The sample has been moved to https://github.com/NVIDIA-AI-IOT/deepstream_tao_apps/tree/master/apps/tao_others/deepstream_lpr_app
+Please refer to the new link. 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 # Sample For Car License Recognization
  - [Description](#description)
  - [Performance](#performance)
